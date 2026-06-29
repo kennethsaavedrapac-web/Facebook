@@ -129,6 +129,36 @@ window.DATA = {
     },
     {
       id: 2,
+      userId: 3,
+      time: '3 hrs',
+      privacy: 'public',
+      text: '¡NO PUEDO ESTAR MÁS FELIZ! 😭💙<br>En la Conferencia General anunciaron que tendremos un TEMPLO en MANAGUA, NICARAGUA. 🇳🇮<br>Qué bendición tan grande para nuestro país y para nuestras familias. Estoy llorando de emoción, esto es un sueño hecho realidad. ✨<br>Gracias Señor por Tu amor y por guiarnos siempre. 🙏💙<br><br>#TemploDeManagua #ConferenciaGeneral #FamiliaEterna',
+      images: ['fb2018/images/luz_verdad_post.png'],
+      reactions: { like: 2450, love: 240, wow: 10 },
+      commentCount: 198,
+      shareCount: 45,
+      comments: [
+        { userId: 2, text: '¡Qué gran bendición! Gloria a Dios 🙌❤️' },
+        { userId: 4, text: 'Qué alegría tan inmensa para toda Centroamérica. Amén.' },
+      ],
+    },
+    {
+      id: 3,
+      userId: 2,
+      time: '4 hrs',
+      privacy: 'public',
+      text: 'Qué mensaje más hermoso y lleno de verdad. ❤️<br>El Presidente Nelson siempre nos enseña con tanto amor y claridad. ¡Vamos a hacer del templo una prioridad! ✨<br><br>#PresidentNelson101 #Templo #ÉlVive',
+      images: ['fb2018/images/hija_convenios_post.png'],
+      reactions: { like: 1680, love: 210, wow: 10 },
+      commentCount: 156,
+      shareCount: 32,
+      comments: [
+        { userId: 3, text: 'Totalmente de acuerdo. El templo trae paz a nuestras vidas.' },
+        { userId: 8, text: 'Un mensaje muy oportuno 🌸' }
+      ],
+    },
+    {
+      id: 4,
       userId: 1,
       time: 'Yesterday at 11:30 PM',
       privacy: 'public',
@@ -146,36 +176,6 @@ window.DATA = {
         { userId: 8, text: '¡¡Jungkook se ve precioso en la última foto!! 😭😍' },
         { userId: 9, text: 'Escuchando Fake Love sin parar 🎧' },
         { userId: 5, text: 'Los extrañamos demasiado' }
-      ],
-    },
-    {
-      id: 3,
-      userId: 3,
-      time: '3 hrs',
-      privacy: 'public',
-      text: '¡NO PUEDO ESTAR MÁS FELIZ! 😭💙<br>En la Conferencia General anunciaron que tendremos un TEMPLO en MANAGUA, NICARAGUA. 🇳🇮<br>Qué bendición tan grande para nuestro país y para nuestras familias. Estoy llorando de emoción, esto es un sueño hecho realidad. ✨<br>Gracias Señor por Tu amor y por guiarnos siempre. 🙏💙<br><br>#TemploDeManagua #ConferenciaGeneral #FamiliaEterna',
-      images: ['fb2018/images/luz_verdad_post.png'],
-      reactions: { like: 2450, love: 240, wow: 10 },
-      commentCount: 198,
-      shareCount: 45,
-      comments: [
-        { userId: 2, text: '¡Qué gran bendición! Gloria a Dios 🙌❤️' },
-        { userId: 4, text: 'Qué alegría tan inmensa para toda Centroamérica. Amén.' },
-      ],
-    },
-    {
-      id: 4,
-      userId: 2,
-      time: '4 hrs',
-      privacy: 'public',
-      text: 'Qué mensaje más hermoso y lleno de verdad. ❤️<br>El Presidente Nelson siempre nos enseña con tanto amor y claridad. ¡Vamos a hacer del templo una prioridad! ✨<br><br>#PresidentNelson101 #Templo #ÉlVive',
-      images: ['fb2018/images/hija_convenios_post.png'],
-      reactions: { like: 1680, love: 210, wow: 10 },
-      commentCount: 156,
-      shareCount: 32,
-      comments: [
-        { userId: 3, text: 'Totalmente de acuerdo. El templo trae paz a nuestras vidas.' },
-        { userId: 8, text: 'Un mensaje muy oportuno 🌸' }
       ],
     },
     {
