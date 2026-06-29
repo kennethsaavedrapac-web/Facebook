@@ -10,6 +10,11 @@
   <link rel="stylesheet" href="fb2018/css/profile.css">
   <link rel="stylesheet" href="fb2018/css/messenger.css">
   <link rel="stylesheet" href="fb2018/css/notifications.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1877F2">
+  <meta name="description" content="Aplicación Facebook - Conecta con amigos y familiares">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231877F2' width='192' height='192'/><text x='50%' y='50%' font-size='120' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>f</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231877F2' width='192' height='192'/><text x='50%' y='50%' font-size='120' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>f</text></svg>">
 </head>
 <body>
 
@@ -203,5 +208,36 @@
   <script src="fb2018/js/notifications.js"></script>
   <script src="fb2018/js/router.js"></script>
   <script src="fb2018/js/main.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then((registration) => {
+            console.log('✓ Service Worker registrado:', registration);
+            
+            // Comprobar actualizaciones cada hora
+            setInterval(() => {
+              registration.update();
+            }, 3600000);
+            
+            // Notificar cuando hay actualización disponible
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('Nueva versión disponible');
+                  // Opcional: mostrar notificación al usuario
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.log('✗ Error al registrar Service Worker:', error);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
