@@ -10,105 +10,105 @@ window.DATA = {
   },
 
   users: [
-    { 
-      id: 1, 
-      name: 'ARMY Forever',    
-      avatar: 'fb2018/images/bts_logo.png',  
-      cover: 'fb2018/images/bts_group.png', 
-      bio: 'BTS Fan Club 💜 #FakeLove #LoveYourselfTear', 
-      friends: 15420, 
-      work: 'Fanbase Oficial', 
-      city: 'Seúl' 
+    {
+      id: 1,
+      name: 'ARMY Forever',
+      avatar: 'fb2018/images/bts_logo.png',
+      cover: 'fb2018/images/bts_group.png',
+      bio: 'BTS Fan Club 💜 #FakeLove #LoveYourselfTear',
+      friends: 15420,
+      work: 'Fanbase Oficial',
+      city: 'Seúl'
     },
-    { 
-      id: 2, 
-      name: 'Hija de Convenios 💗',     
-      avatar: 'fb2018/images/hija_convenios_avatar.png',  
-      cover: 'fb2018/images/hija_convenios_post.png', 
-      bio: 'Hija de Dios 🌸✨',         
-      friends: 3218, 
-      work: 'Jóvenes de Sión', 
-      city: 'Salt Lake City' 
+    {
+      id: 2,
+      name: 'Hija de Convenios 💗',
+      avatar: 'fb2018/images/hija_convenios_avatar.png',
+      cover: 'fb2018/images/hija_convenios_post.png',
+      bio: 'Hija de Dios 🌸✨',
+      friends: 3218,
+      work: 'Jóvenes de Sión',
+      city: 'Salt Lake City'
     },
-    { 
-      id: 3, 
-      name: 'Luz y Verdad 💙',    
-      avatar: 'fb2018/images/luz_verdad_avatar.png',  
-      cover: 'fb2018/images/luz_verdad_post.png', 
-      bio: 'Guiados por la fe y la verdad ⛪🕊️',     
-      friends: 8489, 
-      work: 'Misionero', 
-      city: 'Managua' 
+    {
+      id: 3,
+      name: 'Luz y Verdad 💙',
+      avatar: 'fb2018/images/luz_verdad_avatar.png',
+      cover: 'fb2018/images/luz_verdad_post.png',
+      bio: 'Guiados por la fe y la verdad ⛪🕊️',
+      friends: 8489,
+      work: 'Misionero',
+      city: 'Managua'
     },
-    { 
-      id: 4, 
-      name: 'Siendo Luz',  
-      avatar: 'fb2018/images/siendo_luz_avatar.png',  
-      cover: 'fb2018/images/siendo_luz_post.png', 
-      bio: 'Comparte luz y amor. Dios te bendiga. ☀️🌱',  
-      friends: 12560, 
-      work: 'Predicador', 
-      city: 'Guatemala' 
+    {
+      id: 4,
+      name: 'Siendo Luz',
+      avatar: 'fb2018/images/siendo_luz_avatar.png',
+      cover: 'fb2018/images/siendo_luz_post.png',
+      bio: 'Comparte luz y amor. Dios te bendiga. ☀️🌱',
+      friends: 12560,
+      work: 'Predicador',
+      city: 'Guatemala'
     },
-    { 
-      id: 5, 
-      name: 'Miraculous Fan',     
-      avatar: 'fb2018/images/ladybug_avatar.png',  
-      cover: 'fb2018/images/gorizilla_post.png', 
-      bio: '¡Miraculous Ladybug por siempre! 🐞✨',         
-      friends: 4820, 
-      work: 'Creador de Contenido', 
-      city: 'París' 
+    {
+      id: 5,
+      name: 'Miraculous Fan',
+      avatar: 'fb2018/images/ladybug_avatar.png',
+      cover: 'fb2018/images/gorizilla_post.png',
+      bio: '¡Miraculous Ladybug por siempre! 🐞✨',
+      friends: 4820,
+      work: 'Creador de Contenido',
+      city: 'París'
     },
-    { 
-      id: 6, 
-      name: 'Miraculous Ladybug en Español',    
-      avatar: 'fb2018/images/cat_noir_avatar.png',  
-      cover: 'fb2018/images/gorizilla_post.png', 
-      bio: 'Comunidad en español de Miraculous Ladybug 🐾🐱',     
-      friends: 8489, 
-      work: 'Administrador de Fansite', 
-      city: 'Madrid' 
+    {
+      id: 6,
+      name: 'Miraculous Ladybug en Español',
+      avatar: 'fb2018/images/cat_noir_avatar.png',
+      cover: 'fb2018/images/gorizilla_post.png',
+      bio: 'Comunidad en español de Miraculous Ladybug 🐾🐱',
+      friends: 8489,
+      work: 'Administrador de Fansite',
+      city: 'Madrid'
     },
-    { 
-      id: 7, 
-      name: 'Frases Diarias',  
-      avatar: 'fb2018/images/sun_avatar.png',  
-      cover: 'https://picsum.photos/seed/suncover/800/300', 
-      bio: 'Un rayo de sol y motivación para tu día a día ☀️🌱',  
-      friends: 24500, 
-      work: 'Escritor', 
-      city: 'Buenos Aires' 
+    {
+      id: 7,
+      name: 'Frases Diarias',
+      avatar: 'fb2018/images/sun_avatar.png',
+      cover: 'https://picsum.photos/seed/suncover/800/300',
+      bio: 'Un rayo de sol y motivación para tu día a día ☀️🌱',
+      friends: 24500,
+      work: 'Escritor',
+      city: 'Buenos Aires'
     },
-    { 
-      id: 8, 
-      name: 'María García',  
-      avatar: 'https://i.pravatar.cc/80?img=1',  
-      cover: 'https://picsum.photos/seed/u1c/800/300', 
-      bio: 'Fotógrafa y viajera 📷',        
-      friends: 342, 
-      work: 'Freelance', 
-      city: 'Madrid' 
+    {
+      id: 8,
+      name: 'María García',
+      avatar: 'https://i.pravatar.cc/80?img=1',
+      cover: 'https://picsum.photos/seed/u1c/800/300',
+      bio: 'Fotógrafa y viajera 📷',
+      friends: 342,
+      work: 'Freelance',
+      city: 'Madrid'
     },
-    { 
-      id: 9, 
-      name: 'Carlos Ruiz',     
-      avatar: 'https://i.pravatar.cc/80?img=3',  
-      cover: 'https://picsum.photos/seed/u2c/800/300', 
-      bio: 'Dev & café ☕',               
-      friends: 218, 
-      work: 'Startup XYZ', 
-      city: 'Barcelona' 
+    {
+      id: 9,
+      name: 'Carlos Ruiz',
+      avatar: 'https://i.pravatar.cc/80?img=3',
+      cover: 'https://picsum.photos/seed/u2c/800/300',
+      bio: 'Dev & café ☕',
+      friends: 218,
+      work: 'Startup XYZ',
+      city: 'Barcelona'
     },
-    { 
-      id: 10, 
-      name: 'Miguel Angel Ramirez Jimenez',     
-      avatar: 'fb2018/images/Miguel.png',  
-      cover: 'fb2018/images/Miguel.png', 
-      bio: '🐼 EnTrAsTe A Mi ViDa... ^^CoLoR^^',               
-      friends: 342, 
-      work: '', 
-      city: '' 
+    {
+      id: 10,
+      name: 'Miguel Angel Ramirez Jimenez',
+      avatar: 'fb2018/images/Miguel.png',
+      cover: 'fb2018/images/Miguel.png',
+      bio: '🐼 EnTrAsTe A Mi ViDa... ^^CoLoR^^',
+      friends: 342,
+      work: '',
+      city: ''
     },
   ],
 
@@ -125,7 +125,7 @@ window.DATA = {
     {
       id: 1,
       userId: 5,
-      time: 'Ahora mismo',
+      time: '14 de marzo de 2018',
       privacy: 'public',
       text: '¡¡Ya salió Gorizilla!! 😱<br>¿Adrien estuvo a punto de descubrir a Ladybug?',
       images: ['fb2018/images/gorizilla_post.png'],
@@ -140,7 +140,7 @@ window.DATA = {
     {
       id: 2,
       userId: 3,
-      time: '3 hrs',
+      time: '2 de abril del 2018',
       privacy: 'public',
       text: '¡NO PUEDO ESTAR MÁS FELIZ! 😭💙<br>En la Conferencia General anunciaron que tendremos un TEMPLO en MANAGUA, NICARAGUA. 🇳🇮<br>Qué bendición tan grande para nuestro país y para nuestras familias. Estoy llorando de emoción, esto es un sueño hecho realidad. ✨<br>Gracias Señor por Tu amor y por guiarnos siempre. 🙏💙<br><br>#TemploDeManagua #ConferenciaGeneral #FamiliaEterna',
       images: ['fb2018/images/luz_verdad_post.png'],
@@ -155,7 +155,7 @@ window.DATA = {
     {
       id: 3,
       userId: 2,
-      time: '4 hrs',
+      time: '22 de abril del 2018',
       privacy: 'public',
       text: 'Qué mensaje más hermoso y lleno de verdad. ❤️<br>El Presidente Nelson siempre nos enseña con tanto amor y claridad. ¡Vamos a hacer del templo una prioridad! ✨<br><br>#PresidentNelson101 #Templo #ÉlVive',
       images: ['fb2018/images/hija_convenios_post.png'],
@@ -170,7 +170,7 @@ window.DATA = {
     {
       id: 4,
       userId: 1,
-      time: 'Ayer a las 11:30 PM',
+      time: '25 de abril del 2018',
       privacy: 'public',
       text: 'BTS en loop todo el día 💜<br>Los extraño mucho, cuándo será el próximo concierto? 😭<br><br>#BTS #ARMY #LoveYourselfTear #FakeLove',
       images: [
@@ -191,7 +191,7 @@ window.DATA = {
     {
       id: 5,
       userId: 6,
-      time: 'Ayer a las 6:45 PM',
+      time: '30 de abril de 2018',
       privacy: 'public',
       text: '¡Nuevo akuma en acción! 💜<br>Opiniones sobre "Gorizilla" 😢👇',
       images: [
@@ -209,7 +209,7 @@ window.DATA = {
     {
       id: 6,
       userId: 4,
-      time: 'Ayer a las 8:45 PM',
+      time: '5 de mayo del 2018',
       privacy: 'public',
       text: 'No importa lo que estés pasando, Dios tiene el control.<br>Confía en Él, todo tiene un propósito. 🙏💛<br><br>#Fe #Confianza #DiosEsBueno',
       images: ['fb2018/images/siendo_luz_post.png'],
@@ -223,7 +223,7 @@ window.DATA = {
     {
       id: 7,
       userId: 10,
-      time: '20 MAY 2018',
+      time: '20 de mayo del 2018',
       privacy: 'friends',
       text: '🐼. EnTrAsTe A Mi ViDa, En TiEmPoS De BlAnCo y NeGrO a DaRlE. ^^CoLoR^^.🐼#_Mile.°♡° — <strong>motivado(a)</strong>.',
       images: ['fb2018/images/Miguel.png'],
@@ -270,14 +270,14 @@ window.DATA = {
   ],
 
   notifications: [
-    { id: 1, userId: 8, type: 'love',    text: 'le encantó tu foto.',            time: 'Hace 5 min',  unread: true,  thumb: 'fb2018/images/bts_jungkook.png' },
-    { id: 2, userId: 5, type: 'comment', text: 'comentó tu publicación.',  time: 'Hace 20 min', unread: true,  thumb: null },
+    { id: 1, userId: 8, type: 'love', text: 'le encantó tu foto.', time: 'Hace 5 min', unread: true, thumb: 'fb2018/images/bts_jungkook.png' },
+    { id: 2, userId: 5, type: 'comment', text: 'comentó tu publicación.', time: 'Hace 20 min', unread: true, thumb: null },
   ],
 
-  friendRequests: [], 
+  friendRequests: [],
 
   marketplaceItems: [
     { id: 1, price: '150 €', title: 'Bici de montaña', img: 'https://picsum.photos/seed/mk1/400/400', location: 'Madrid' },
-    { id: 2, price: '40 €',  title: 'Silla de oficina', img: 'https://picsum.photos/seed/mk2/400/400', location: 'Barcelona' },
+    { id: 2, price: '40 €', title: 'Silla de oficina', img: 'https://picsum.photos/seed/mk2/400/400', location: 'Barcelona' },
   ],
 };
