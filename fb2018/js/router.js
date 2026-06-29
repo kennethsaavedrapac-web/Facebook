@@ -2,14 +2,9 @@
 
 window.Router = (() => {
 
-  const stack = ['feed'];
-
   const TAB_SCREENS = ['feed', 'friends', 'marketplace', 'notifications', 'menu'];
-  const OVERLAY_SCREENS = ['profile', 'messenger'];
 
   function showScreen(name) {
-    // Check if this screen is already active
-    const currentlyActive = document.querySelector('.screen.active');
     const target = document.getElementById(`screen-${name}`);
     
     // Hide all non-overlay screens
@@ -102,19 +97,19 @@ window.Router = (() => {
     }
   }
 
-  function push(screen, params = {}) {
-    stack.push(screen);
+  function navigateToState(screen, params = {}) {
+    showScreen(screen);
 
-    if (screen === 'profile' && params.userId != null) {
-      showScreen('profile');
-      Profile.render(params.userId);
+    if (screen === 'profile') {
+      const uid = params.userId !== undefined ? params.userId : 0;
+      Profile.render(uid);
+    } else if (screen === 'album') {
+      Profile.renderAlbum();
     } else if (screen === 'messenger') {
-      showScreen('messenger');
       Messenger.renderList();
     } else {
-      // Show skeletons on tab navigation for a realistic feel
+      // Tab navigation
       if (TAB_SCREENS.includes(screen)) {
-        showScreen(screen);
         showSkeletons(screen);
         
         setTimeout(() => {
@@ -127,35 +122,75 @@ window.Router = (() => {
           } else if (screen === 'feed') {
             Feed.renderFeedOnly();
           }
-        }, 350);
-      } else {
-        showScreen(screen);
+        }, 250);
       }
     }
   }
 
+  function push(screen, params = {}) {
+    if (TAB_SCREENS.includes(screen)) {
+      history.replaceState({ screen, params }, '', '#' + screen);
+      navigateToState(screen, params);
+    } else {
+      history.pushState({ screen, params }, '', '#' + screen);
+      navigateToState(screen, params);
+    }
+  }
+
   function pop() {
-    if (stack.length > 1) stack.pop();
-    const prev = stack[stack.length - 1];
-    showScreen(prev);
+    history.back();
   }
 
   function init() {
-    // Tab navigation
+    // Setup initial state
+    if (!history.state) {
+      const initialScreen = location.hash.replace('#', '') || 'feed';
+      const validScreen = TAB_SCREENS.includes(initialScreen) ? initialScreen : 'feed';
+      history.replaceState({ screen: validScreen, params: {} }, '', '#' + validScreen);
+      navigateToState(validScreen);
+    } else {
+      navigateToState(history.state.screen, history.state.params);
+    }
+
+    // Popstate history listener
+    window.addEventListener('popstate', (e) => {
+      if (e.state && e.state.screen) {
+        navigateToState(e.state.screen, e.state.params);
+      } else {
+        navigateToState('feed');
+      }
+    });
+
+    // Tab navigation clicks
     document.querySelectorAll('.tab[data-screen]').forEach(tab => {
       tab.addEventListener('click', () => {
         const screen = tab.dataset.screen;
-        if (stack[stack.length - 1] === screen) return; // avoid duplicate load
-        stack.length = 1;
-        stack[0] = screen;
         push(screen);
       });
     });
 
-    // Back buttons
+    // Back buttons click bindings
     document.querySelectorAll('[data-back]').forEach(btn => {
       btn.addEventListener('click', pop);
     });
+
+    const profileBackBtn = document.getElementById('profile-back-btn');
+    if (profileBackBtn) {
+      profileBackBtn.addEventListener('click', pop);
+    }
+
+    const albumBackBtn = document.getElementById('album-back-btn');
+    if (albumBackBtn) {
+      albumBackBtn.addEventListener('click', pop);
+    }
+
+    // Profile menu row click binding
+    const menuProfileRow = document.getElementById('menu-profile-row');
+    if (menuProfileRow) {
+      menuProfileRow.addEventListener('click', () => {
+        push('profile', { userId: 0 });
+      });
+    }
   }
 
   function renderMarketplace() {

@@ -165,8 +165,8 @@ window.Feed = (() => {
     delete picker.dataset.postId;
   }
 
-  function bindFeedEvents() {
-    const container = document.getElementById('feed-posts');
+  function bindFeedEvents(container) {
+    container = container || document.getElementById('feed-posts');
     if (!container) return;
 
     // Profile navigation

@@ -1,64 +1,271 @@
-/* PROFILE */
-#profile-content {}
+/* PROFILE AND ALBUM SCREENS */
 
-.profile-cover {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+#screen-profile, #screen-album {
+  position: fixed;
+  top: var(--status-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 110;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header style for sub-screens matching Facebook Android 2018 */
+.profile-header {
+  height: var(--topbar-h);
+  background: var(--fb-blue);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: white;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.profile-back-btn {
+  background: none;
+  border: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  outline: none;
+}
+.profile-back-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+.profile-back-btn svg {
   display: block;
 }
+.profile-header-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+/* Scroll containers */
+.profile-scroll-container, .album-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg);
+}
+
+/* Profile Elements */
+.profile-cover {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  display: block;
+  background: #ccd0d5;
+}
 .profile-avatar-wrap {
-  position: relative;
-  margin-top: -44px;
-  padding: 0 16px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -65px; /* overlapping the cover photo partially */
+  position: relative;
+  z-index: 2;
 }
 .profile-avatar {
-  width: 88px;
-  height: 88px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   border: 4px solid white;
   object-fit: cover;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
-.profile-actions { display: flex; gap: 8px; padding-bottom: 4px; }
-
 .profile-info {
   padding: 12px 16px 0;
+  text-align: center;
 }
-.profile-name { font-size: 22px; font-weight: 800; }
-.profile-bio { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
-.profile-friends-count { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
-
-.profile-section {
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1c1e21;
+}
+.profile-bio {
+  font-size: 14px;
+  color: #616770;
   margin-top: 8px;
+  line-height: 1.4;
+  padding: 0 20px;
+}
+
+/* 2018 Facebook Android style buttons in a single row */
+.profile-buttons-row {
+  display: flex;
+  gap: 8px;
+  padding: 14px 12px 12px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+.btn-add-friend {
+  flex: 1;
+  background: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  outline: none;
+}
+.btn-add-friend:active {
+  background: #135ebd;
+}
+.btn-add-friend svg {
+  fill: currentColor;
+}
+.btn-msg {
+  flex: 1;
+  background: #e4e6eb;
+  color: #1c1e21;
+  border: none;
+  border-radius: 4px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  outline: none;
+}
+.btn-msg:active {
+  background: #d8dadf;
+}
+.btn-msg svg {
+  fill: currentColor;
+}
+.btn-more {
+  width: 48px;
+  background: #e4e6eb;
+  color: #1c1e21;
+  border: none;
+  border-radius: 4px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+}
+.btn-more:active {
+  background: #d8dadf;
+}
+
+/* Profile sections */
+.profile-section {
   background: white;
   padding: 12px 16px;
   border-top: 8px solid var(--bg);
 }
 .profile-section h3 {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   margin-bottom: 12px;
+  color: #1c1e21;
 }
+
+/* Info Row matching original design */
 .profile-info-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #1c1e21;
+}
+.profile-info-row:last-child {
+  margin-bottom: 0;
+}
+.profile-info-row svg {
+  color: #8d949e;
+  flex-shrink: 0;
+}
+.profile-info-row .bold-info {
+  font-weight: 700;
+}
+.profile-info-link {
+  color: #385898;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.profile-info-link svg {
+  color: #8d949e;
 }
 
+/* Photos Section */
+.profile-photos-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+.profile-photos-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1e21;
+}
+.profile-photos-link {
+  font-size: 14px;
+  color: #385898;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 4px;
+  display: inline-block;
+  width: max-content;
+}
+.profile-photos-link:hover {
+  text-decoration: underline;
+}
 .profile-photos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
+  gap: 4px;
 }
 .profile-photos-grid img {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
+  border-radius: 2px;
   cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Album grid style */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 8px;
+  background: white;
+}
+.album-grid img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.album-grid img:active {
+  opacity: 0.8;
 }

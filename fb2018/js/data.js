@@ -4,9 +4,13 @@ window.DATA = {
 
   me: {
     id: 0,
-    name: 'Tu Nombre',
-    avatar: 'https://i.pravatar.cc/80?img=12',
-    cover: 'https://picsum.photos/seed/mycover/800/300',
+    name: 'Mile',
+    avatar: 'fb2018/Perfil/PerfilFoto.png',
+    cover: 'fb2018/Perfil/Portada.png',
+    bio: 'Hola personitas de Facebook! Les saludo y les digo que es una bendición estar con mis amigos :).',
+    city: 'Granada, Nicaragua',
+    birthday: '13 de octubre de 2005',
+    friends: 842
   },
 
   users: [
