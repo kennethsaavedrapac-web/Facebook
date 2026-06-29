@@ -125,7 +125,7 @@ window.DATA = {
     {
       id: 1,
       userId: 5,
-      time: 'Just now',
+      time: 'Ahora mismo',
       privacy: 'public',
       text: '¡¡Ya salió Gorizilla!! 😱<br>¿Adrien estuvo a punto de descubrir a Ladybug?',
       images: ['fb2018/images/gorizilla_post.png'],
@@ -170,7 +170,7 @@ window.DATA = {
     {
       id: 4,
       userId: 1,
-      time: 'Yesterday at 11:30 PM',
+      time: 'Ayer a las 11:30 PM',
       privacy: 'public',
       text: 'BTS en loop todo el día 💜<br>Los extraño mucho, cuándo será el próximo concierto? 😭<br><br>#BTS #ARMY #LoveYourselfTear #FakeLove',
       images: [
@@ -191,7 +191,7 @@ window.DATA = {
     {
       id: 5,
       userId: 6,
-      time: 'Yesterday at 6:45 PM',
+      time: 'Ayer a las 6:45 PM',
       privacy: 'public',
       text: '¡Nuevo akuma en acción! 💜<br>Opiniones sobre "Gorizilla" 😢👇',
       images: [
@@ -209,7 +209,7 @@ window.DATA = {
     {
       id: 6,
       userId: 4,
-      time: 'Yesterday at 8:45 PM',
+      time: 'Ayer a las 8:45 PM',
       privacy: 'public',
       text: 'No importa lo que estés pasando, Dios tiene el control.<br>Confía en Él, todo tiene un propósito. 🙏💛<br><br>#Fe #Confianza #DiosEsBueno',
       images: ['fb2018/images/siendo_luz_post.png'],
@@ -238,7 +238,7 @@ window.DATA = {
     {
       id: 8,
       userId: 7,
-      time: 'Yesterday at 9:20 PM',
+      time: 'Ayer a las 9:20 PM',
       privacy: 'public',
       text: 'Confía en el proceso. Todo llega en el momento justo. 🌱✨',
       images: [],

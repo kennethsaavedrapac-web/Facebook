@@ -65,8 +65,8 @@ window.Feed = (() => {
     // Exact outline SVGs for Like, Comment, Share buttons
     const activeReactionColor = hasReaction ? 'var(--fb-blue)' : 'currentColor';
     const activeText = hasReaction 
-      ? { like:'Like', love:'Love', haha:'Haha', wow:'Wow', sad:'Sad', angry:'Angry' }[hasReaction]
-      : 'Like';
+      ? { like:'Me gusta', love:'Me encanta', haha:'Haha', wow:'Asombra', sad:'Entristece', angry:'Enoja' }[hasReaction]
+      : 'Me gusta';
 
     return `
     <div class="post-card" data-post-id="${post.id}">
@@ -82,7 +82,7 @@ window.Feed = (() => {
       ${imageGrid(post.images)}
       <div class="post-stats">
         ${reactionSummary(post.reactions)}
-        <span class="post-stats-comments">${post.commentCount} Comments</span>
+        <span class="post-stats-comments">${post.commentCount} comentarios</span>
       </div>
       <div class="post-actions">
         <button class="post-action-btn btn-like ${hasReaction ? 'reacted' : ''}" data-post-id="${post.id}">
@@ -91,11 +91,11 @@ window.Feed = (() => {
         </button>
         <button class="post-action-btn btn-comment" data-post-id="${post.id}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Comment
+          Comentar
         </button>
         <button class="post-action-btn btn-share" data-post-id="${post.id}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-          Share
+          Compartir
         </button>
       </div>
     </div>`;
@@ -230,7 +230,7 @@ window.Feed = (() => {
     // Share
     container.querySelectorAll('.btn-share').forEach(btn => {
       btn.addEventListener('click', () => {
-        alert('Compartido en tu biografía (simulado)');
+        alert('Publicación compartida en tu biografía.');
       });
     });
   }
