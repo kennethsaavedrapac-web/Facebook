@@ -100,6 +100,16 @@ window.DATA = {
       work: 'Startup XYZ', 
       city: 'Barcelona' 
     },
+    { 
+      id: 10, 
+      name: 'Miguel Angel Ramirez Jimenez',     
+      avatar: 'fb2018/images/Miguel.png',  
+      cover: 'fb2018/images/Miguel.png', 
+      bio: '🐼 EnTrAsTe A Mi ViDa... ^^CoLoR^^',               
+      friends: 342, 
+      work: '', 
+      city: '' 
+    },
   ],
 
   stories: [
@@ -212,6 +222,21 @@ window.DATA = {
     },
     {
       id: 7,
+      userId: 10,
+      time: '20 MAY 2018',
+      privacy: 'friends',
+      text: '🐼. EnTrAsTe A Mi ViDa, En TiEmPoS De BlAnCo y NeGrO a DaRlE. ^^CoLoR^^.🐼#_Mile.°♡° — <strong>motivado(a)</strong>.',
+      images: ['fb2018/images/Miguel.png'],
+      reactions: { like: 56, love: 20, wow: 10 },
+      commentCount: 15,
+      shareCount: 3,
+      comments: [
+        { userId: 8, text: '😍❤️' },
+        { userId: 9, text: 'Tani Rivera y otros comentaron esto.' }
+      ],
+    },
+    {
+      id: 8,
       userId: 7,
       time: 'Yesterday at 9:20 PM',
       privacy: 'public',
