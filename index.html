@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Facebook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="fb2018/css/main.css">
   <link rel="stylesheet" href="fb2018/css/feed.css">
   <link rel="stylesheet" href="fb2018/css/profile.css">
@@ -81,6 +82,7 @@
       </svg>
       <span class="menu-dot"></span>
     </button>
+    <div id="tab-indicator"></div>
   </nav>
 
   <!-- SCREENS -->
@@ -88,12 +90,26 @@
 
     <!-- FEED -->
     <section id="screen-feed" class="screen active">
-      <div id="stories-bar"><!-- populated by JS --></div>
-      <div id="create-post-bar">
-        <img src="https://i.pravatar.cc/40?img=12" alt="You" class="avatar">
-        <button class="create-post-input">¿Qué estás pensando?</button>
+      <div class="ptr-loading">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="2" x2="12" y2="6"/>
+          <line x1="12" y1="18" x2="12" y2="22"/>
+          <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+          <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+          <line x1="2" y1="12" x2="6" y2="12"/>
+          <line x1="18" y1="12" x2="22" y2="12"/>
+          <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+          <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+        </svg>
       </div>
-      <div id="feed-posts"><!-- populated by JS --></div>
+      <div class="ptr-container">
+        <div id="stories-bar"><!-- populated by JS --></div>
+        <div id="create-post-bar">
+          <img src="https://i.pravatar.cc/40?img=12" alt="You" class="avatar">
+          <button class="create-post-input">¿Qué estás pensando?</button>
+        </div>
+        <div id="feed-posts"><!-- populated by JS --></div>
+      </div>
     </section>
 
     <!-- FRIENDS -->

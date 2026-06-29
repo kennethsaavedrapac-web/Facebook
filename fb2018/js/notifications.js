@@ -6,6 +6,17 @@ window.Notifications = (() => {
 
   function render() {
     const list = document.getElementById('notif-list');
+    if (!list) return;
+    
+    if (DATA.notifications.length === 0) {
+      list.innerHTML = `
+        <div style="padding: 24px; text-align: center; color: var(--text-secondary); font-size: 14px; background: white;">
+          No tienes notificaciones por el momento.
+        </div>
+      `;
+      return;
+    }
+
     list.innerHTML = DATA.notifications.map(n => {
       const user = DATA.users.find(u => u.id === n.userId);
       return `<div class="notif-item ${n.unread ? 'unread' : ''}" data-notif="${n.id}">
@@ -28,12 +39,28 @@ window.Notifications = (() => {
         if (notif) notif.unread = false;
         el.classList.remove('unread');
         updateBadge();
+        
+        // If it is a comment, show comments sheet on feed
+        if (notif && notif.type === 'comment') {
+          Router.push('feed');
+          setTimeout(() => {
+            // Find post 1 (Miraculous) or post 2 (BTS) to open comments
+            const targetPost = DATA.posts.find(p => p.userId === notif.userId) || DATA.posts[0];
+            if (targetPost) {
+              Feed.openComments(targetPost.id);
+            }
+          }, 400);
+        } else {
+          // Navigate to profile
+          Router.push('profile', { userId: notif.userId });
+        }
       });
     });
   }
 
   function updateBadge() {
     const badge = document.getElementById('notif-badge');
+    if (!badge) return;
     const count = DATA.notifications.filter(n => n.unread).length;
     if (count > 0) {
       badge.textContent = count;
@@ -43,15 +70,45 @@ window.Notifications = (() => {
     }
   }
 
-  function showBanner(text) {
+  let bannerTimeout = null;
+
+  function showBanner(text, actionText = null, actionCallback = null) {
     const banner = document.getElementById('notif-banner');
-    banner.textContent = text;
-    banner.classList.remove('hidden');
-    banner.classList.add('show');
-    setTimeout(() => {
+    if (!banner) return;
+    
+    // Clear previous timeouts
+    if (bannerTimeout) {
+      clearTimeout(bannerTimeout);
       banner.classList.remove('show');
-      setTimeout(() => banner.classList.add('hidden'), 300);
-    }, 3000);
+    }
+
+    // Set content
+    banner.innerHTML = `
+      <div style="flex:1; margin-right:8px; line-height: 1.3;">${text}</div>
+      ${actionText ? `<span id="notif-banner-action">${actionText}</span>` : ''}
+    `;
+
+    banner.classList.remove('hidden');
+    
+    // Force reflow for transitions
+    banner.offsetHeight; 
+    banner.classList.add('show');
+
+    if (actionText && actionCallback) {
+      const actionBtn = banner.querySelector('#notif-banner-action');
+      if (actionBtn) {
+        actionBtn.onclick = (e) => {
+          e.stopPropagation();
+          banner.classList.remove('show');
+          actionCallback();
+        };
+      }
+    }
+
+    bannerTimeout = setTimeout(() => {
+      banner.classList.remove('show');
+      bannerTimeout = null;
+    }, 4500);
   }
 
   function pushNotification(userId, type, text) {
@@ -66,41 +123,64 @@ window.Notifications = (() => {
     };
     DATA.notifications.unshift(newNotif);
     updateBadge();
+    
+    // Play Notification Sound if available
+    if (window.playNotificationSound) {
+      window.playNotificationSound();
+    } else if (typeof playNotificationSound === 'function') {
+      playNotificationSound();
+    }
+
+    // Vibrate device
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
+
     const user = DATA.users.find(u => u.id === userId);
-    showBanner(`${user.name} ${text}`);
+    showBanner(`${user.name} ${text}`, "Ver", () => {
+      Router.push('notifications');
+    });
+    
     render();
   }
 
-  // Simulated event-driven notifications
-  let scrollCount = 0;
   let likeCount = 0;
 
   document.addEventListener('fb:liked', () => {
     likeCount++;
-    if (likeCount === 2) {
-      setTimeout(() => pushNotification(3, 'like', 'también dio Me gusta a tu publicación.'), 2000);
+    if (likeCount === 1) {
+      // Miraculous Fan comments your post
+      setTimeout(() => {
+        pushNotification(2, 'comment', 'comentó tu publicación sobre Miraculous.');
+      }, 5000);
+    } else if (likeCount === 2) {
+      // ARMY Forever likes your post
+      setTimeout(() => {
+        pushNotification(1, 'like', 'reaccionó a tu publicación.');
+      }, 4000);
     }
   });
-
-  document.addEventListener('scroll', () => {}, { passive: true });
 
   function init() {
     updateBadge();
     render();
 
     // Mark all as read when visiting notifications tab
-    document.querySelector('[data-screen="notifications"]').addEventListener('click', () => {
-      setTimeout(() => {
-        DATA.notifications.forEach(n => n.unread = false);
-        render();
-        updateBadge();
-      }, 500);
-    });
+    const tabNotif = document.querySelector('.tab[data-screen="notifications"]');
+    if (tabNotif) {
+      tabNotif.addEventListener('click', () => {
+        setTimeout(() => {
+          DATA.notifications.forEach(n => n.unread = false);
+          render();
+          updateBadge();
+        }, 350);
+      });
+    }
 
-    // Trigger a notification after a few seconds as demo
+    // Trigger initial notification delay to simulate real network updates
     setTimeout(() => {
-      pushNotification(5, 'comment', 'te mencionó en un comentario.');
-    }, 8000);
+      pushNotification(1, 'love', 'le encantó tu foto de perfil.');
+    }, 12000);
   }
 
   return { init, render, updateBadge, showBanner, pushNotification };
