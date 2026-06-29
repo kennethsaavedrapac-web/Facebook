@@ -11,7 +11,8 @@
   --text-secondary: #65676b;
   --border: #ced0d4;
   --status-h: 24px;
-  --topnav-h: 56px;
+  --topbar-h: 52px;
+  --tabbar-h: 52px;
 }
 
 html, body {
@@ -37,55 +38,102 @@ html, body {
 #clock { color: white; font-size: 12px; font-weight: 600; }
 .status-icons { display: flex; align-items: center; gap: 6px; }
 
-/* TOP NAV */
-#topnav {
+/* TOP BAR - Blue search bar */
+#topbar-blue {
   position: fixed;
   top: var(--status-h);
   left: 0; right: 0;
-  height: var(--topnav-h);
+  height: var(--topbar-h);
   background: var(--fb-blue);
   display: flex;
   align-items: center;
   z-index: 99;
-  padding: 0 8px;
+  padding: 0 10px;
+  gap: 8px;
 }
-#fb-logo { flex: 0 0 auto; margin-right: 8px; display: flex; align-items: center; }
-#tab-bar {
+.topbar-icon-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+#search-bar {
   flex: 1;
   display: flex;
-  justify-content: center;
-  gap: 0;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 8px 14px;
+  height: 36px;
+}
+#search-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: rgba(255,255,255,0.85);
+  font-size: 15px;
+  flex: 1;
+  font-family: inherit;
+}
+#search-input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+/* TAB BAR - White */
+#tab-bar {
+  position: fixed;
+  top: calc(var(--status-h) + var(--topbar-h));
+  left: 0; right: 0;
+  height: var(--tabbar-h);
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 98;
 }
 .tab {
   position: relative;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0 16px;
-  height: var(--topnav-h);
+  padding: 0;
+  height: var(--tabbar-h);
+  flex: 1;
   display: flex;
   align-items: center;
-  color: rgba(255,255,255,0.7);
+  justify-content: center;
+  color: #65676b;
   transition: color .15s;
 }
-.tab.active { color: white; }
+.tab.active {
+  color: var(--fb-blue);
+}
 .tab.active::after {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 3px;
-  background: white;
+  background: var(--fb-blue);
   border-radius: 2px 2px 0 0;
 }
-#topnav-actions { display: flex; gap: 8px; align-items: center; }
-.icon-btn {
-  position: relative;
-  background: rgba(255,255,255,0.15);
-  border: none;
+
+/* Menu dot indicator */
+.menu-dot {
+  position: absolute;
+  top: 8px;
+  right: calc(50% - 16px);
+  width: 8px;
+  height: 8px;
+  background: var(--fb-blue);
   border-radius: 50%;
-  width: 36px; height: 36px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
 }
 
 /* BADGE */
@@ -102,11 +150,15 @@ html, body {
   padding: 0 3px;
   border: 2px solid var(--fb-blue);
 }
+/* Badge on white tab bar */
+#tab-bar .badge {
+  border-color: var(--white);
+}
 
 /* MAIN / SCREENS */
 #app {
   position: fixed;
-  top: calc(var(--status-h) + var(--topnav-h));
+  top: calc(var(--status-h) + var(--topbar-h) + var(--tabbar-h));
   left: 0; right: 0; bottom: 0;
   overflow: hidden;
 }
@@ -155,7 +207,7 @@ html, body {
 /* NOTIFICATION BANNER */
 #notif-banner {
   position: fixed;
-  top: calc(var(--status-h) + var(--topnav-h) + 8px);
+  top: calc(var(--status-h) + var(--topbar-h) + var(--tabbar-h) + 8px);
   left: 12px; right: 12px;
   background: #333;
   color: white;

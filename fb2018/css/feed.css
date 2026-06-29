@@ -78,11 +78,12 @@
 }
 .post-author:hover { text-decoration: underline; }
 .post-meta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-top: 1px;
 }
 .post-options-btn {
   background: none;
@@ -91,6 +92,7 @@
   cursor: pointer;
   color: var(--text-secondary);
   padding: 4px 8px;
+  letter-spacing: 1px;
 }
 .post-text {
   padding: 4px 12px 10px;
@@ -98,7 +100,7 @@
   line-height: 1.4;
 }
 
-/* IMAGE GRIDS */
+/* IMAGE GRIDS - edge to edge */
 .post-images { cursor: pointer; }
 .img-grid-1 img {
   width: 100%;
@@ -146,30 +148,43 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 14px;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border);
 }
 .post-reactions-summary {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+}
+.reaction-circles {
+  display: flex;
+  align-items: center;
 }
 .reaction-circle {
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
-  margin-right: -4px;
-  border: 1.5px solid white;
+  margin-right: -6px;
+  border: 2px solid white;
+  position: relative;
 }
-.rc-like { background: #1877f2; }
-.rc-love { background: #f33e58; }
-.rc-haha { background: #f7b125; }
-.rc-wow  { background: #f7b125; }
+.reaction-circle:last-child {
+  margin-right: 0;
+}
+.rc-like { background: #1877f2; z-index: 3; }
+.rc-love { background: #f33e58; z-index: 2; }
+.rc-haha { background: #f7b125; z-index: 1; }
+.rc-wow  { background: #f7b125; z-index: 1; }
+.rc-sad  { background: #f7b125; z-index: 1; }
+.rc-angry { background: #e4405f; z-index: 1; }
+.post-stats-comments {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
 
 /* POST ACTIONS */
 .post-actions {
@@ -180,12 +195,13 @@
   flex: 1;
   background: none;
   border: none;
-  padding: 10px 0;
+  padding: 0;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
@@ -194,6 +210,11 @@
 .post-action-btn:hover { background: var(--bg); }
 .post-action-btn.reacted { color: var(--fb-blue); }
 .post-action-btn svg { flex-shrink: 0; }
+
+/* Vertical separators between action buttons */
+.post-action-btn + .post-action-btn {
+  border-left: 1px solid var(--border);
+}
 
 /* COMMENT ITEM */
 .comment-item {

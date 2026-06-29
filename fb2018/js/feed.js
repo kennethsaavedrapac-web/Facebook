@@ -44,15 +44,15 @@ window.Feed = (() => {
     const circles = entries.slice(0, 3).map(([k]) =>
       `<span class="reaction-circle rc-${k}">${{like:'👍',love:'❤️',haha:'😂',wow:'😮',sad:'😢',angry:'😡'}[k]}</span>`
     ).join('');
-    return `<div class="post-reactions-summary">${circles} <span>${total}</span></div>`;
+    return `<div class="post-reactions-summary"><div class="reaction-circles">${circles}</div> <span>${total}</span></div>`;
   }
 
   function renderPost(post) {
     const user = DATA.users.find(u => u.id === post.userId) || DATA.me;
     const hasReaction = post._myReaction;
     const reactionLabel = hasReaction
-      ? { like:'Me gusta', love:'Me encanta', haha:'Me divierte', wow:'Me asombra', sad:'Me entristece', angry:'Me enoja' }[hasReaction]
-      : 'Me gusta';
+      ? { like:'Like', love:'Love', haha:'Haha', wow:'Wow', sad:'Sad', angry:'Angry' }[hasReaction]
+      : 'Like';
 
     return `
     <div class="post-card" data-post-id="${post.id}">
@@ -62,26 +62,26 @@ window.Feed = (() => {
           <div class="post-author" data-profile="${user.id}">${user.name}</div>
           <div class="post-meta">${post.time} · ${privacyIcon(post.privacy)}</div>
         </div>
-        <button class="post-options-btn">···</button>
+        <button class="post-options-btn">•••</button>
       </div>
       ${post.text ? `<div class="post-text">${post.text}</div>` : ''}
       ${imageGrid(post.images)}
       <div class="post-stats">
         ${reactionSummary(post.reactions)}
-        <span>${post.commentCount} comentarios · ${post.shareCount} compartidos</span>
+        <span class="post-stats-comments">${post.commentCount} Comments</span>
       </div>
       <div class="post-actions">
         <button class="post-action-btn btn-like ${hasReaction ? 'reacted' : ''}" data-post-id="${post.id}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
           ${reactionLabel}
         </button>
         <button class="post-action-btn btn-comment" data-post-id="${post.id}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-          Comentar
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Comment
         </button>
         <button class="post-action-btn btn-share" data-post-id="${post.id}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-          Compartir
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Share
         </button>
       </div>
     </div>`;
