@@ -1,5 +1,5 @@
 // Service Worker para Facebook PWA
-const CACHE_NAME = 'facebook-pwa-v3';
+const CACHE_NAME = 'facebook-pwa-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -15,7 +15,9 @@ const urlsToCache = [
   '/fb2018/js/messenger.js',
   '/fb2018/js/notifications.js',
   '/fb2018/js/router.js',
-  '/fb2018/js/data.js'
+  '/fb2018/js/data.js',
+  '/fb2018/images/icon-192.png',
+  '/fb2018/images/icon-512.png'
 ];
 
 // Instalar service worker
