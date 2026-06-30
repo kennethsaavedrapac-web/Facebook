@@ -8,9 +8,17 @@
   bottom: 0;
   z-index: 110;
   background: var(--bg);
-  display: flex;
+  display: none;
   flex-direction: column;
   overflow: hidden;
+}
+
+#screen-profile.active, #screen-album.active {
+  display: flex;
+}
+
+#screen-profile.hidden, #screen-album.hidden {
+  display: none !important;
 }
 
 /* Header style for sub-screens matching Facebook Android 2018 */

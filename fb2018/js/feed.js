@@ -508,5 +508,5 @@ window.Feed = (() => {
     });
   }
 
-  return { init, openPhoto, openComments, renderFeedOnly };
+  return { init, openPhoto, openComments, renderFeedOnly, renderPost, bindFeedEvents };
 })();
