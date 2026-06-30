@@ -1,23 +1,23 @@
 // Service Worker para Facebook PWA
-const CACHE_NAME = 'facebook-pwa-v4';
+const CACHE_NAME = 'facebook-pwa-v5';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/fb2018/css/main.css',
-  '/fb2018/css/feed.css',
-  '/fb2018/css/profile.css',
-  '/fb2018/css/messenger.css',
-  '/fb2018/css/notifications.css',
-  '/fb2018/js/main.js',
-  '/fb2018/js/feed.js',
-  '/fb2018/js/profile.js',
-  '/fb2018/js/messenger.js',
-  '/fb2018/js/notifications.js',
-  '/fb2018/js/router.js',
-  '/fb2018/js/data.js',
-  '/fb2018/images/icon-192.png',
-  '/fb2018/images/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './fb2018/css/main.css',
+  './fb2018/css/feed.css',
+  './fb2018/css/profile.css',
+  './fb2018/css/messenger.css',
+  './fb2018/css/notifications.css',
+  './fb2018/js/main.js',
+  './fb2018/js/feed.js',
+  './fb2018/js/profile.js',
+  './fb2018/js/messenger.js',
+  './fb2018/js/notifications.js',
+  './fb2018/js/router.js',
+  './fb2018/js/data.js',
+  './fb2018/images/icon-192.png',
+  './fb2018/images/icon-512.png'
 ];
 
 // Instalar service worker
@@ -27,7 +27,12 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Cacheando archivos');
-        return cache.addAll(urlsToCache);
+        // Cache files one by one to avoid failing all if one is missing
+        return Promise.allSettled(
+          urlsToCache.map(url => cache.add(url).catch(err => {
+            console.warn('No se pudo cachear:', url, err);
+          }))
+        );
       })
       .catch(err => console.log('Error al cachear:', err))
   );

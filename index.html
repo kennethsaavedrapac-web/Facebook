@@ -163,6 +163,27 @@
           <div class="menu-sub">Ver tu perfil</div>
         </div>
       </div>
+
+      <!-- Descarga la app - PWA Install Card -->
+      <div id="pwa-install-card" class="pwa-install-card">
+        <div class="pwa-install-card-left">
+          <div class="pwa-install-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/>
+            </svg>
+          </div>
+          <div class="pwa-install-text">
+            <div class="pwa-install-title">Descarga la app</div>
+            <div class="pwa-install-desc">Obtén una mejor experiencia usando nuestra aplicación.</div>
+          </div>
+        </div>
+        <button id="pwa-install-btn" class="pwa-install-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="margin-right: 6px;">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          Descargar
+        </button>
+      </div>
     </section>
 
     <!-- PROFILE (overlay) -->
@@ -247,11 +268,74 @@
   <script src="fb2018/js/router.js"></script>
   <script src="fb2018/js/main.js"></script>
 
-  <!-- Service Worker Registration -->
+  <!-- Service Worker Registration & PWA Install -->
   <script>
+    // PWA Install prompt handler
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the default mini-infobar
+      e.preventDefault();
+      // Save the event for later
+      deferredPrompt = e;
+      console.log('✓ PWA install prompt capturado');
+      
+      // Show the install card
+      const card = document.getElementById('pwa-install-card');
+      if (card) card.style.display = 'flex';
+    });
+
+    // Handle the install button click
+    document.addEventListener('DOMContentLoaded', () => {
+      const installBtn = document.getElementById('pwa-install-btn');
+      const installCard = document.getElementById('pwa-install-card');
+
+      if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            // Use the saved prompt
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('PWA install outcome:', outcome);
+            if (outcome === 'accepted') {
+              installCard.style.display = 'none';
+            }
+            deferredPrompt = null;
+          } else {
+            // Fallback: show manual instructions
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            
+            if (isIOS || isSafari) {
+              alert('Para instalar esta app:\n\n1. Toca el botón de compartir (📤) en la barra del navegador\n2. Selecciona "Agregar a pantalla de inicio"\n3. Toca "Agregar"');
+            } else {
+              alert('Para instalar esta app:\n\n1. Abre el menú del navegador (⋮)\n2. Selecciona "Instalar aplicación" o "Agregar a pantalla de inicio"\n3. Confirma la instalación');
+            }
+          }
+        });
+      }
+    });
+
+    // Detect if already installed
+    window.addEventListener('appinstalled', () => {
+      console.log('✓ PWA instalada correctamente');
+      deferredPrompt = null;
+      const card = document.getElementById('pwa-install-card');
+      if (card) card.style.display = 'none';
+    });
+
+    // Check if running as standalone (already installed)
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      document.addEventListener('DOMContentLoaded', () => {
+        const card = document.getElementById('pwa-install-card');
+        if (card) card.style.display = 'none';
+      });
+    }
+
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
+        navigator.serviceWorker.register('./service-worker.js')
           .then((registration) => {
             console.log('✓ Service Worker registrado:', registration);
             
@@ -266,7 +350,6 @@
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   console.log('Nueva versión disponible');
-                  // Opcional: mostrar notificación al usuario
                 }
               });
             });
