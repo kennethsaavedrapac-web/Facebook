@@ -2,6 +2,25 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '0';
+      div.style.left = '0';
+      div.style.right = '0';
+      div.style.backgroundColor = 'red';
+      div.style.color = 'white';
+      div.style.padding = '12px';
+      div.style.zIndex = '99999';
+      div.style.fontSize = '14px';
+      div.style.fontWeight = 'bold';
+      div.style.wordBreak = 'break-all';
+      div.innerHTML = 'Error: ' + message + '<br>Archivo: ' + source + '<br>Línea: ' + lineno + ':' + colno;
+      document.body.appendChild(div);
+      return false;
+    };
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Facebook</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">

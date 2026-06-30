@@ -143,7 +143,7 @@ window.Router = (() => {
 
   function init() {
     // Setup initial state
-    if (!history.state) {
+    if (!history.state || !history.state.screen) {
       const initialScreen = location.hash.replace('#', '') || 'feed';
       const validScreen = TAB_SCREENS.includes(initialScreen) ? initialScreen : 'feed';
       history.replaceState({ screen: validScreen, params: {} }, '', '#' + validScreen);
