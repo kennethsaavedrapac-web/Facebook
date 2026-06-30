@@ -139,11 +139,26 @@ window.Profile = (() => {
   }
 
   async function render(userId) {
+    const content = document.getElementById('profile-content');
+    const skeletonContainer = document.getElementById('profile-skeleton-container');
+    if (!content) return;
+
+    // ── Step 1: Show skeleton, hide real content ──
+    content.classList.remove('profile-loaded');
+    content.innerHTML = '';
+    if (skeletonContainer) {
+      skeletonContainer.classList.remove('fade-out');
+      skeletonContainer.style.display = '';
+    }
+
+    // Scroll to top
+    const scrollContainer = content.closest('.profile-scroll-container');
+    if (scrollContainer) scrollContainer.scrollTop = 0;
+
+    // ── Step 2: Load data ──
     await initProfileData();
     
     const user = DATA.users.find(u => u.id === userId) || DATA.me;
-    const content = document.getElementById('profile-content');
-    if (!content) return;
     
     let userPhotos = [];
     let userPosts = [];
@@ -158,6 +173,7 @@ window.Profile = (() => {
 
     const photosGridSlice = userPhotos.slice(0, 6);
 
+    // ── Step 3: Render real content (invisible via CSS opacity:0) ──
     content.innerHTML = `
       <img src="${user.cover}" class="profile-cover" alt="Portada" onerror="this.src='fb2018/Perfil/Portada.png'">
       <div class="profile-avatar-wrap">
@@ -232,6 +248,38 @@ window.Profile = (() => {
         </div>
       </div>
     `;
+
+    // ── Step 4: Wait for all images to load ──
+    const images = content.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      if (img.complete && img.naturalHeight > 0) return Promise.resolve();
+      return new Promise(resolve => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    });
+
+    // Wait for images but with a max timeout of 5 seconds
+    await Promise.race([
+      Promise.all(imagePromises),
+      new Promise(resolve => setTimeout(resolve, 5000))
+    ]);
+
+    // ── Step 5: Fade out skeleton, fade in content ──
+    if (skeletonContainer) {
+      skeletonContainer.classList.add('fade-out');
+      // After the fade-out animation finishes, hide skeleton entirely
+      setTimeout(() => {
+        skeletonContainer.style.display = 'none';
+      }, 300);
+    }
+
+    // Small delay to let the skeleton start fading before content appears
+    requestAnimationFrame(() => {
+      content.classList.add('profile-loaded');
+    });
+
+    // ── Step 6: Bind events ──
 
     // Bind photo clicks in the grid
     content.querySelectorAll('[data-photo-profile]').forEach(el => {
