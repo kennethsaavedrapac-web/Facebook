@@ -120,6 +120,10 @@ window.Feed = (() => {
       container.innerHTML = DATA.posts.map(renderPost).join('');
       bindFeedEvents();
     }
+    const createAvatar = document.querySelector('#create-post-bar img');
+    if (createAvatar) {
+      createAvatar.src = DATA.me.avatar;
+    }
   }
 
   function renderFeed() {
@@ -428,6 +432,12 @@ window.Feed = (() => {
         </div>
       </div>`;
     }).join('');
+
+    // Set current user's avatar in the input row
+    const inputRowImg = sheet.querySelector('#comments-input-row img');
+    if (inputRowImg) {
+      inputRowImg.src = DATA.me.avatar;
+    }
 
     sheet.classList.remove('hidden');
     backdrop.classList.remove('hidden');

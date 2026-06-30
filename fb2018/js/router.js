@@ -187,6 +187,11 @@ window.Router = (() => {
     // Profile menu row click binding
     const menuProfileRow = document.getElementById('menu-profile-row');
     if (menuProfileRow) {
+      const menuAvatar = menuProfileRow.querySelector('img');
+      if (menuAvatar) menuAvatar.src = DATA.me.avatar;
+      const menuName = menuProfileRow.querySelector('.menu-name');
+      if (menuName) menuName.textContent = DATA.me.name;
+
       menuProfileRow.addEventListener('click', () => {
         push('profile', { userId: 0 });
       });
