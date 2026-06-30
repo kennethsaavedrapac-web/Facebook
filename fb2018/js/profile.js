@@ -71,10 +71,10 @@ window.Profile = (() => {
         const randomComments = [
           { userId: 10, text: 'La más hermosa de todas las personitas 😍❤️ te amo mi amor!' },
           { userId: 8, text: 'Qué bella mi amiga! Saludos' },
-          { userId: 9, text: 'Guapísima Mile, bendiciones!' },
-          { userId: 2, text: 'Qué linda foto Mile, qué bendición!' },
+          { userId: 9, text: 'Guapísima Josseling, bendiciones!' },
+          { userId: 2, text: 'Qué linda foto Josseling, qué bendición!' },
           { userId: 10, text: 'Preciosa mía 💕' },
-          { userId: 3, text: 'Saludos Mile, que estés muy bien!' }
+          { userId: 3, text: 'Saludos Josseling, que estés muy bien!' }
         ];
         const count = 2 + Math.floor(Math.random() * 3);
         for (let j = 0; j < count; j++) {
@@ -87,7 +87,7 @@ window.Profile = (() => {
 
       generated.push({
         id: `profile-post-${photoNum}`,
-        userId: 0, // Mile
+        userId: 0, // Josseling
         time: dateText,
         privacy: 'public',
         text: captionText,

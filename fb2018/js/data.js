@@ -4,7 +4,7 @@ window.DATA = {
 
   me: {
     id: 0,
-    name: 'Mile',
+    name: 'Josseling Susana Ramirez Jimenez',
     avatar: 'fb2018/Perfil/PerfilFoto.png',
     cover: 'fb2018/Perfil/Portada.png',
     bio: 'Hola personitas de Facebook! Les saludo y les digo que es una bendición estar con mis amigos :).',
