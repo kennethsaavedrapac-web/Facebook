@@ -2,6 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Initialize Login Screen
+  LoginScreen.init();
+
   // Clock
   function updateClock() {
     const now = new Date();
