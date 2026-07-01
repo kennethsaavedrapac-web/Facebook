@@ -34,21 +34,29 @@ window.NavManager = (() => {
       case 'notifications':
       case 'menu':
         _closeAllModals();
-        _closeAllOverlays();
-        _showTabScreen(route);
-        if (route === 'feed' && window.FeedStore && FeedStore.isRendered) {
-          requestAnimationFrame(() => {
-            const feedScreen = document.getElementById('screen-feed');
-            if (feedScreen) feedScreen.scrollTop = FeedStore.scrollPosition || 0;
-          });
+        const tabScreen = document.getElementById(`screen-${route}`);
+        const isTabActive = tabScreen && tabScreen.classList.contains('active');
+        if (!isTabActive) {
+          _closeAllOverlays();
+          _showTabScreen(route);
+          if (route === 'feed' && window.FeedStore && FeedStore.isRendered) {
+            requestAnimationFrame(() => {
+              const feedScreen = document.getElementById('screen-feed');
+              if (feedScreen) feedScreen.scrollTop = FeedStore.scrollPosition || 0;
+            });
+          }
         }
         break;
 
       // ── Overlay screens ──────────────────────────────────────────────────
       case 'messenger':
         _closeAllModals();
-        _showOverlay('screen-messenger');
-        if (window.Messenger) Messenger.renderList();
+        const messengerScreen = document.getElementById('screen-messenger');
+        const isMessengerActive = messengerScreen && messengerScreen.classList.contains('active') && !messengerScreen.classList.contains('hidden');
+        if (!isMessengerActive) {
+          _showOverlay('screen-messenger');
+          if (window.Messenger) Messenger.renderList();
+        }
         break;
 
       case 'messenger-chat':
@@ -61,16 +69,24 @@ window.NavManager = (() => {
 
       case 'profile':
         _closeAllModals();
-        _showOverlay('screen-profile');
-        if (window.ProfileStore && params) {
-          ProfileStore.render(params.userId !== undefined ? params.userId : 0);
+        const profileScreen = document.getElementById('screen-profile');
+        const isProfileActive = profileScreen && profileScreen.classList.contains('active') && !profileScreen.classList.contains('hidden');
+        if (!isProfileActive) {
+          _showOverlay('screen-profile');
+          if (window.ProfileStore && params) {
+            ProfileStore.render(params.userId !== undefined ? params.userId : 0);
+          }
         }
         break;
 
       case 'album':
         _closeAllModals();
-        _showOverlay('screen-album');
-        if (window.ProfileStore) ProfileStore.renderAlbum();
+        const albumScreen = document.getElementById('screen-album');
+        const isAlbumActive = albumScreen && albumScreen.classList.contains('active') && !albumScreen.classList.contains('hidden');
+        if (!isAlbumActive) {
+          _showOverlay('screen-album');
+          if (window.ProfileStore) ProfileStore.renderAlbum();
+        }
         break;
 
       // ── Modals ─────────────────────────────────────────────────────────────
