@@ -2,8 +2,22 @@
 
 window.Profile = (() => {
 
+  // ── STATIC PHOTO LIST (replaces HTTP HEAD scan of /Perfil) ──
+  // This was the #1 bottleneck: 19+ sequential fetch(HEAD) requests (~2-4s).
+  const KNOWN_PHOTOS = [];
+  for (let i = 1; i <= 18; i++) {
+    KNOWN_PHOTOS.push(`fb2018/Perfil/Foto${i}.png`);
+  }
+
   let detectedPhotos = [];
   let profilePosts = [];
+
+  // ── IN-MEMORY CACHE ──
+  let _cacheUserId = null;
+  let _cacheHTML = null;
+  let _cacheUserPhotos = null;
+  let _cacheUserPosts = null;
+  let _dataInitialized = false;
 
   // Chronological list of dates for the 18 photos from May 1 to June 30, 2018.
   const DATES = [
@@ -101,32 +115,13 @@ window.Profile = (() => {
     return generated;
   }
 
-  async function initProfileData() {
-    if (detectedPhotos.length > 0) return;
-    
-    // Attempt automatic detection of files Foto1.png to Foto100.png
-    let i = 1;
-    while (i <= 100) {
-      const src = `fb2018/Perfil/Foto${i}.png`;
-      try {
-        const res = await fetch(src, { method: 'HEAD' });
-        if (res.ok || res.status === 200) {
-          detectedPhotos.push(src);
-          i++;
-        } else {
-          break;
-        }
-      } catch (e) {
-        break;
-      }
-    }
-    
-    // Fallback if browser local fetch blocks HEAD/GET
-    if (detectedPhotos.length === 0) {
-      for (let f = 1; f <= 18; f++) {
-        detectedPhotos.push(`fb2018/Perfil/Foto${f}.png`);
-      }
-    }
+  // ── SYNCHRONOUS init (no HTTP requests) ──
+  function initProfileData() {
+    if (_dataInitialized) return;
+    _dataInitialized = true;
+
+    // Use the static known list directly — no fetch() calls needed
+    detectedPhotos = KNOWN_PHOTOS.slice();
 
     profilePosts = generatePosts(detectedPhotos);
     
@@ -138,43 +133,25 @@ window.Profile = (() => {
     });
   }
 
-  async function render(userId) {
-    const content = document.getElementById('profile-content');
-    const skeletonContainer = document.getElementById('profile-skeleton-container');
-    if (!content) return;
+  // ── PRELOAD CRITICAL IMAGES ──
+  function preloadCriticalImages(userPhotos) {
+    const criticalSrcs = [
+      'fb2018/Perfil/PerfilFoto.png',
+      'fb2018/Perfil/Portada.png'
+    ];
+    // Add images from the first 2 posts (newest first)
+    if (userPhotos.length > 0) criticalSrcs.push(userPhotos[0]);
+    if (userPhotos.length > 1) criticalSrcs.push(userPhotos[1]);
 
-    // ── Step 1: Show skeleton, hide real content ──
-    content.classList.remove('profile-loaded');
-    content.innerHTML = '';
-    if (skeletonContainer) {
-      skeletonContainer.classList.remove('fade-out');
-      skeletonContainer.style.display = '';
-    }
+    criticalSrcs.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }
 
-    // Scroll to top
-    const scrollContainer = content.closest('.profile-scroll-container');
-    if (scrollContainer) scrollContainer.scrollTop = 0;
-
-    // ── Step 2: Load data ──
-    await initProfileData();
-    
-    const user = DATA.users.find(u => u.id === userId) || DATA.me;
-    
-    let userPhotos = [];
-    let userPosts = [];
-    
-    if (user.id === 0) {
-      userPhotos = [...detectedPhotos].reverse(); // newest first
-      userPosts = DATA.posts.filter(p => p.userId === 0);
-    } else {
-      userPosts = DATA.posts.filter(p => p.userId === user.id);
-      userPhotos = userPosts.flatMap(p => p.images || []).slice(0, 9);
-    }
-
-    const photosGridSlice = userPhotos.slice(0, 6);
-
-    // ── Step 3: Render real content (invisible via CSS opacity:0) ──
-    content.innerHTML = `
+  // ── BUILD PROFILE HEADER HTML (everything above posts) ──
+  function buildProfileHeaderHTML(user, photosGridSlice) {
+    return `
       <img src="${user.cover}" class="profile-cover" alt="Portada" onerror="this.src='fb2018/Perfil/Portada.png'">
       <div class="profile-avatar-wrap">
         <img src="${user.avatar}" class="profile-avatar" onerror="this.src='fb2018/Perfil/PerfilFoto.png'">
@@ -235,7 +212,7 @@ window.Profile = (() => {
         </div>
         ${photosGridSlice.length > 0 ? `
           <div class="profile-photos-grid">
-            ${photosGridSlice.map(src => `<img src="${src}" data-photo-profile="${src}">`).join('')}
+            ${photosGridSlice.map(src => `<img src="${src}" loading="lazy" data-photo-profile="${src}">`).join('')}
           </div>
         ` : '<p style="color:var(--text-secondary);font-size:14px">Sin fotos.</p>'}
       </div>
@@ -243,43 +220,133 @@ window.Profile = (() => {
       <!-- Publicaciones section -->
       <div class="profile-section" style="padding-left: 0; padding-right: 0;">
         <h3 style="padding-left: 16px;">Publicaciones</h3>
-        <div id="profile-posts-list">
-          ${userPosts.map(post => Feed.renderPost(post)).join('')}
-        </div>
+        <div id="profile-posts-list"></div>
       </div>
     `;
+  }
 
-    // ── Step 4: Wait for all images to load ──
-    const images = content.querySelectorAll('img');
-    const imagePromises = Array.from(images).map(img => {
-      if (img.complete && img.naturalHeight > 0) return Promise.resolve();
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
-      });
-    });
+  // ── PROGRESSIVE FEED RENDERING ──
+  // Renders first 2 posts immediately, then batches of 4 via requestIdleCallback/setTimeout
+  function renderPostsProgressively(container, posts, userPhotos) {
+    if (!container || posts.length === 0) return;
 
-    // Wait for images but with a max timeout of 5 seconds
-    await Promise.race([
-      Promise.all(imagePromises),
-      new Promise(resolve => setTimeout(resolve, 5000))
-    ]);
+    const INITIAL_BATCH = 2;
+    const BATCH_SIZE = 4;
 
-    // ── Step 5: Fade out skeleton, fade in content ──
+    // Render first 2 posts immediately
+    const initialPosts = posts.slice(0, INITIAL_BATCH);
+    container.innerHTML = initialPosts.map(post => Feed.renderPost(post)).join('');
+    Feed.bindFeedEvents(container);
+
+    // Render remaining posts progressively
+    let offset = INITIAL_BATCH;
+
+    function renderNextBatch() {
+      if (offset >= posts.length) return;
+
+      const batch = posts.slice(offset, offset + BATCH_SIZE);
+      const fragment = document.createDocumentFragment();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = batch.map(post => Feed.renderPost(post)).join('');
+
+      while (tempDiv.firstChild) {
+        fragment.appendChild(tempDiv.firstChild);
+      }
+
+      container.appendChild(fragment);
+      offset += BATCH_SIZE;
+
+      // Re-bind events only on the newly added posts
+      Feed.bindFeedEvents(container);
+
+      if (offset < posts.length) {
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(renderNextBatch, { timeout: 150 });
+        } else {
+          setTimeout(renderNextBatch, 100);
+        }
+      }
+    }
+
+    if (offset < posts.length) {
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(renderNextBatch, { timeout: 150 });
+      } else {
+        setTimeout(renderNextBatch, 100);
+      }
+    }
+  }
+
+  // ── MAIN RENDER (optimized) ──
+  function render(userId) {
+    const content = document.getElementById('profile-content');
+    const skeletonContainer = document.getElementById('profile-skeleton-container');
+    if (!content) return;
+
+    // ── Step 1: Show skeleton, hide real content ──
+    content.classList.remove('profile-loaded');
+    content.innerHTML = '';
+    if (skeletonContainer) {
+      skeletonContainer.classList.remove('fade-out');
+      skeletonContainer.style.display = '';
+    }
+
+    // Scroll to top
+    const scrollContainer = content.closest('.profile-scroll-container');
+    if (scrollContainer) scrollContainer.scrollTop = 0;
+
+    // ── Step 2: Load data (synchronous — no HTTP requests) ──
+    initProfileData();
+    
+    const user = DATA.users.find(u => u.id === userId) || DATA.me;
+    
+    let userPhotos = [];
+    let userPosts = [];
+    
+    if (user.id === 0) {
+      userPhotos = [...detectedPhotos].reverse(); // newest first
+      userPosts = DATA.posts.filter(p => p.userId === 0);
+    } else {
+      userPosts = DATA.posts.filter(p => p.userId === user.id);
+      userPhotos = userPosts.flatMap(p => p.images || []).slice(0, 9);
+    }
+
+    const photosGridSlice = userPhotos.slice(0, 6);
+
+    // ── Step 3: Preload only critical images ──
+    preloadCriticalImages(userPhotos);
+
+    // ── Step 4: Use cached HTML or build new ──
+    if (_cacheUserId === userId && _cacheHTML) {
+      content.innerHTML = _cacheHTML;
+    } else {
+      const headerHTML = buildProfileHeaderHTML(user, photosGridSlice);
+      content.innerHTML = headerHTML;
+      _cacheHTML = headerHTML;
+      _cacheUserId = userId;
+      _cacheUserPhotos = userPhotos;
+      _cacheUserPosts = userPosts;
+    }
+
+    // ── Step 5: Show content immediately (no image wait!) ──
     if (skeletonContainer) {
       skeletonContainer.classList.add('fade-out');
-      // After the fade-out animation finishes, hide skeleton entirely
       setTimeout(() => {
         skeletonContainer.style.display = 'none';
       }, 300);
     }
 
-    // Small delay to let the skeleton start fading before content appears
     requestAnimationFrame(() => {
       content.classList.add('profile-loaded');
     });
 
-    // ── Step 6: Bind events ──
+    // ── Step 6: Progressive post rendering ──
+    const postsContainer = content.querySelector('#profile-posts-list');
+    if (postsContainer) {
+      renderPostsProgressively(postsContainer, userPosts, userPhotos);
+    }
+
+    // ── Step 7: Bind events ──
 
     // Bind photo clicks in the grid
     content.querySelectorAll('[data-photo-profile]').forEach(el => {
@@ -323,23 +390,20 @@ window.Profile = (() => {
         }
       });
     }
-
-    // Bind events for the posts rendered in this profile
-    const postsContainer = content.querySelector('#profile-posts-list');
-    if (postsContainer) {
-      Feed.bindFeedEvents(postsContainer);
-    }
   }
 
   function renderAlbum() {
     const albumContent = document.getElementById('album-content');
     if (!albumContent) return;
 
+    // Ensure data is ready (synchronous)
+    initProfileData();
+
     const reversedPhotos = [...detectedPhotos].reverse(); // newest first
 
     albumContent.innerHTML = `
       <div class="album-grid">
-        ${reversedPhotos.map(src => `<img src="${src}" data-photo-album="${src}">`).join('')}
+        ${reversedPhotos.map(src => `<img src="${src}" loading="lazy" data-photo-album="${src}">`).join('')}
       </div>
     `;
 
