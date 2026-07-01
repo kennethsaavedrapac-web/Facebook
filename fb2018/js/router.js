@@ -2,7 +2,7 @@
 
 window.Router = (() => {
 
-  const TAB_SCREENS = ['feed', 'friends', 'marketplace', 'notifications', 'menu'];
+  const TAB_SCREENS = ['feed', 'friends', 'notifications', 'menu'];
 
   function showScreen(name) {
     const target = document.getElementById(`screen-${name}`);
@@ -68,18 +68,7 @@ window.Router = (() => {
             </div>
           </div>`).join('');
       }
-    } else if (screen === 'marketplace') {
-      const grid = document.getElementById('marketplace-grid');
-      if (grid) {
-        grid.innerHTML = Array(4).fill(0).map(() => `
-          <div class="skeleton-card" style="padding: 0; border-radius: 8px; overflow: hidden">
-            <div class="skeleton-line image" style="height: 140px; margin: 0"></div>
-            <div style="padding: 8px; display: flex; flex-direction: column; gap: 6px">
-              <div class="skeleton-line title" style="width: 40%"></div>
-              <div class="skeleton-line sub" style="width: 80%"></div>
-            </div>
-          </div>`).join('');
-      }
+
     } else if (screen === 'notifications') {
       const list = document.getElementById('notif-list');
       if (list) {
@@ -113,9 +102,7 @@ window.Router = (() => {
         showSkeletons(screen);
         
         setTimeout(() => {
-          if (screen === 'marketplace') {
-            renderMarketplace();
-          } else if (screen === 'friends') {
+          if (screen === 'friends') {
             renderFriends();
           } else if (screen === 'notifications') {
             Notifications.render();
@@ -198,19 +185,7 @@ window.Router = (() => {
     }
   }
 
-  function renderMarketplace() {
-    const grid = document.getElementById('marketplace-grid');
-    grid.innerHTML = DATA.marketplaceItems.map(item => `
-      <div class="market-card">
-        <img src="${item.img}" loading="lazy" alt="${item.title}">
-        <div class="market-info">
-          <div class="market-price">${item.price}</div>
-          <div class="market-title">${item.title}</div>
-          <div class="market-title">${item.location}</div>
-        </div>
-      </div>
-    `).join('');
-  }
+
 
   function renderFriends() {
     const list = document.getElementById('friends-list');

@@ -279,9 +279,4 @@ window.DATA = {
   ],
 
   friendRequests: [],
-
-  marketplaceItems: [
-    { id: 1, price: '150 €', title: 'Bici de montaña', img: 'https://picsum.photos/seed/mk1/400/400', location: 'Madrid' },
-    { id: 2, price: '40 €', title: 'Silla de oficina', img: 'https://picsum.photos/seed/mk2/400/400', location: 'Barcelona' },
-  ],
 };

@@ -2,7 +2,7 @@
 
 #screen-profile, #screen-album {
   position: fixed;
-  top: var(--status-h);
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -23,11 +23,12 @@
 
 /* Header style for sub-screens matching Facebook Android 2018 */
 .profile-header {
-  height: var(--topbar-h);
+  height: calc(var(--topbar-h) + var(--safe-top));
   background: var(--fb-blue);
   display: flex;
   align-items: center;
   padding: 0 8px;
+  padding-top: var(--safe-top);
   color: white;
   z-index: 10;
   flex-shrink: 0;
