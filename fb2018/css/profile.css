@@ -1,4 +1,4 @@
-/* PROFILE AND ALBUM SCREENS */
+/* PROFILE AND ALBUM SCREENS - Facebook Android 2018 Redesign */
 
 #screen-profile, #screen-album {
   position: fixed;
@@ -7,10 +7,18 @@
   right: 0;
   bottom: 0;
   z-index: 110;
-  background: var(--bg);
+  background: #F0F2F5; /* Facebook 2018 light grey background */
   display: none;
   flex-direction: column;
   overflow: hidden;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  
+  /* Overrides for local variables */
+  --fb-blue: #4267B2;
+  --bg: #F0F2F5;
+  --border: #DADDE1;
+  --text: #1c1e21;
+  --text-secondary: #616770;
 }
 
 #screen-profile.active, #screen-album.active {
@@ -44,6 +52,7 @@
   cursor: pointer;
   border-radius: 50%;
   outline: none;
+  color: white;
 }
 .profile-back-btn:active {
   background: rgba(255, 255, 255, 0.15);
@@ -52,9 +61,12 @@
   display: block;
 }
 .profile-header-title {
-  font-size: 19px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 500;
   margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Scroll containers */
@@ -62,202 +74,488 @@
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background: var(--bg);
+  background: #F0F2F5;
 }
 
-/* Profile Elements */
-.profile-cover {
+/* Cover & Avatar Area 2018 */
+.profile-cover-container {
   width: 100%;
   height: 190px;
-  object-fit: cover;
-  display: block;
+  position: relative;
   background: #ccd0d5;
 }
-.profile-avatar-wrap {
+.profile-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.profile-cover-camera-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-top: -65px; /* overlapping the cover photo partially */
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.profile-avatar-outer-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: -60px;
   position: relative;
-  z-index: 2;
+  z-index: 5;
+}
+.profile-avatar-container {
+  position: relative;
+  width: 128px;
+  height: 128px;
 }
 .profile-avatar {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px; /* Square-ish avatar like in reference images */
   border: 4px solid white;
   object-fit: cover;
   background: white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
-.profile-info {
-  padding: 12px 16px 0;
-  text-align: center;
-}
-.profile-name {
-  font-size: 22px;
+.profile-avatar-add-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--fb-blue);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.profile-avatar-add-overlay .plus-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Profile Info Area */
+.profile-meta-info {
+  text-align: center;
+  padding: 12px 16px 4px;
+  background: white;
+}
+.profile-name-centered {
+  font-size: 21px;
+  font-weight: 400;
   color: #1c1e21;
 }
-.profile-bio {
+.profile-bio-sub {
   font-size: 14px;
   color: #616770;
-  margin-top: 8px;
-  line-height: 1.4;
-  padding: 0 20px;
+  margin-top: 6px;
 }
 
-/* 2018 Facebook Android style buttons in a single row */
-.profile-buttons-row {
+/* Horizontal Actions Row 2018 */
+.profile-actions-row-2018 {
   display: flex;
-  gap: 8px;
-  padding: 14px 12px 12px;
+  justify-content: space-between;
+  padding: 10px 16px;
   background: white;
   border-bottom: 1px solid var(--border);
+  gap: 8px;
 }
-.btn-add-friend {
+.action-btn-2018 {
   flex: 1;
-  background: #1877f2;
+  background: #f5f6f7;
+  border: 1px solid #ced0d4;
+  border-radius: 4px;
+  height: 36px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b4f56;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  outline: none;
+  min-width: 0;
+}
+.action-btn-2018:active {
+  background: #ebedf0;
+}
+.action-btn-2018.btn-blue-theme {
+  background: var(--fb-blue);
+  border-color: var(--fb-blue);
   color: white;
-  border: none;
-  border-radius: 4px;
-  height: 36px;
-  font-weight: 700;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  outline: none;
 }
-.btn-add-friend:active {
-  background: #135ebd;
+.action-btn-2018.btn-blue-theme:active {
+  background: #36528c;
 }
-.btn-add-friend svg {
-  fill: currentColor;
-}
-.btn-msg {
-  flex: 1;
+.action-btn-2018.active {
   background: #e4e6eb;
+  border-color: #ccd0d5;
   color: #1c1e21;
-  border: none;
-  border-radius: 4px;
-  height: 36px;
-  font-weight: 700;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  outline: none;
-}
-.btn-msg:active {
-  background: #d8dadf;
-}
-.btn-msg svg {
-  fill: currentColor;
-}
-.btn-more {
-  width: 48px;
-  background: #e4e6eb;
-  color: #1c1e21;
-  border: none;
-  border-radius: 4px;
-  height: 36px;
-  font-weight: 700;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  outline: none;
-}
-.btn-more:active {
-  background: #d8dadf;
 }
 
-/* Profile sections */
-.profile-section {
+/* Tabs Bar Navigation 2018 */
+.profile-tabs-bar-2018 {
+  display: flex;
   background: white;
-  padding: 12px 16px;
-  border-top: 8px solid var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  height: 48px;
 }
-.profile-section h3 {
+.profile-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 500;
+  color: #616770;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+}
+.profile-tab-btn:last-child {
+  border-right: none;
+}
+.profile-tab-btn.active {
+  color: var(--fb-blue);
+  font-weight: 700;
+}
+.profile-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--fb-blue);
+}
+
+/* Tabs Panes Layout */
+.profile-tab-contents {
+  padding-bottom: 24px;
+}
+.profile-tab-pane {
+  display: none;
+}
+.profile-tab-pane.active {
+  display: block;
+}
+
+/* Cards System 2018 */
+.profile-card-2018 {
+  background: white;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+}
+.card-header-2018 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1e21;
+  margin-bottom: 10px;
+}
+.card-header-2018.font-bold-header {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 12px;
-  color: #1c1e21;
+}
+.card-close-btn-2018 {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #8d949e;
+  cursor: pointer;
+  outline: none;
 }
 
-/* Info Row matching original design */
-.profile-info-row {
+/* Presentación Card (Blue bordered or structured) */
+.presentacion-card {
+  border: 1px solid var(--fb-blue); /* Distinctive blue-ish highlight border */
+  border-left: none;
+  border-right: none;
+}
+.presentacion-subtitle {
+  font-size: 13px;
+  color: #8d949e;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.presentacion-bio-section {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ebedf0;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.presentacion-bio-text {
+  font-size: 14px;
+  color: #1c1e21;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.presentacion-link-blue {
+  font-size: 14px;
+  color: var(--fb-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+.presentacion-link-blue:hover {
+  text-decoration: underline;
+}
+.presentacion-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.detail-item-2018 {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
   font-size: 14px;
-  color: #1c1e21;
+  color: #4b4f56;
 }
-.profile-info-row:last-child {
-  margin-bottom: 0;
-}
-.profile-info-row svg {
+.detail-icon {
   color: #8d949e;
   flex-shrink: 0;
 }
-.profile-info-row .bold-info {
-  font-weight: 700;
-}
-.profile-info-link {
-  color: #385898;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 4px;
-}
-.profile-info-link svg {
-  color: #8d949e;
-}
-
-/* Photos Section */
-.profile-photos-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-.profile-photos-title {
-  font-size: 16px;
+.detail-item-2018 .bold-text {
   font-weight: 700;
   color: #1c1e21;
 }
-.profile-photos-link {
-  font-size: 14px;
-  color: #385898;
+.presentacion-links-box {
+  margin-top: 14px;
+  border: 1px solid var(--fb-blue);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.presentacion-link-box-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: white;
+  color: var(--fb-blue);
   text-decoration: none;
-  font-weight: 500;
-  margin-top: 4px;
-  display: inline-block;
-  width: max-content;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
 }
-.profile-photos-link:hover {
-  text-decoration: underline;
+.presentacion-link-box-btn:active {
+  background: #f5f6f7;
 }
-.profile-photos-grid {
+
+/* Create Post Box 2018 style */
+.create-post-card-2018 {
+  padding: 10px 12px;
+}
+.create-post-top-2018 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ebedf0;
+}
+.create-post-avatar-2018 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.create-post-input-2018 {
+  flex: 1;
+  background: white;
+  border: 1px solid #ced0d4;
+  border-radius: 20px;
+  height: 36px;
+  padding: 0 16px;
+  text-align: left;
+  font-size: 14px;
+  color: #8d949e;
+  cursor: pointer;
+  outline: none;
+}
+.create-post-input-2018:active {
+  background: #f5f6f7;
+}
+.create-post-bottom-2018 {
+  display: flex;
+  padding-top: 8px;
+  gap: 0;
+}
+.create-post-btn-2018 {
+  flex: 1;
+  background: none;
+  border: none;
+  border-right: 1px solid #ebedf0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #616770;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  outline: none;
+  height: 28px;
+  padding: 0 4px;
+}
+.create-post-btn-2018:last-child {
+  border-right: none;
+}
+.create-post-btn-2018 svg {
+  flex-shrink: 0;
+}
+.btn-icon-green { color: #45bd62; }
+.btn-icon-red { color: #f3425f; }
+.btn-icon-blue { color: #18a7f2; }
+
+/* Shortcut Cards (Fotos, Amigos cards on timeline) */
+.shortcut-card-2018 {
+  padding: 0;
+}
+.shortcut-header-2018 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px 8px;
+}
+.shortcut-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.shortcut-circle-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shortcut-circle-icon.icon-green { background: #45bd62; }
+.shortcut-circle-icon.icon-pink { background: #f3425f; }
+.shortcut-title-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1e21;
+}
+.shortcut-body-2018 {
+  padding: 12px 16px;
+  border-top: 1px solid #ebedf0;
+}
+.shortcut-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 0;
+  gap: 12px;
+}
+.empty-icon-grey {
+  color: #ccd0d5;
+}
+.empty-text {
+  font-size: 14px;
+  color: #8d949e;
+  max-width: 240px;
+  line-height: 1.4;
+}
+.shortcut-actions-2018 {
+  display: flex;
+  border-top: 1px solid #ebedf0;
+  margin-top: 12px;
+  padding-top: 10px;
+  gap: 12px;
+}
+.shortcut-btn-2018 {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b4f56;
+  cursor: pointer;
+  outline: none;
+  height: 32px;
+}
+.shortcut-btn-2018.blue-text {
+  color: var(--fb-blue);
+}
+
+/* Fotos Tab Content Grid */
+.tab-photos-grid-2018 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
+  padding: 4px 0;
 }
-.profile-photos-grid img {
+.tab-photo-img-2018 {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 2px;
-  cursor: pointer;
   border: 1px solid rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+.tab-photo-img-2018:active {
+  opacity: 0.8;
+}
+
+/* Amigos Tab Content Grid */
+.tab-friends-grid-2018 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 4px 0;
+}
+.tab-friend-card-2018 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f5f6f7;
+  cursor: pointer;
+}
+.tab-friend-card-2018:active {
+  background: #ebedf0;
+}
+.tab-friend-avatar-2018 {
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.tab-friend-name-2018 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1c1e21;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 /* Album grid style */
@@ -279,9 +577,47 @@
   opacity: 0.8;
 }
 
-/* ─── PROFILE SKELETON LOADER (Facebook 2018 style) ─────────────────────── */
+/* ─── POST CARD STYLING OVERRIDES FOR 2018 ─── */
+#screen-profile .post-card {
+  margin-top: 8px;
+  margin-bottom: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0; /* Square post cards like in 2018 */
+  box-shadow: none;
+}
+#screen-profile .post-header {
+  padding: 12px 12px 6px;
+}
+#screen-profile .post-author {
+  font-size: 14px;
+  font-weight: 700;
+}
+#screen-profile .post-meta {
+  font-size: 11px;
+}
+#screen-profile .post-text {
+  font-size: 14px;
+  padding: 6px 12px 8px;
+  line-height: 1.4;
+}
+#screen-profile .post-stats {
+  padding: 8px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid #ebedf0;
+}
+#screen-profile .post-actions {
+  border-top: none;
+  padding: 4px;
+}
+#screen-profile .post-action-btn {
+  font-size: 12px;
+  font-weight: 700;
+  color: #616770;
+}
 
-/* Shimmer animation reuse from main.css keyframe */
+/* ─── SKELETON LOADER (Facebook 2018 style overrides) ─────────────────────── */
+
 @keyframes profile-shimmer {
   0% { background-position: -400px 0; }
   100% { background-position: 400px 0; }
@@ -291,7 +627,6 @@
   width: 100%;
 }
 
-/* Shared shimmer base for all skeleton elements */
 .profile-skeleton .sk {
   background: #e8e8e8;
   background-image: linear-gradient(
@@ -305,32 +640,28 @@
   border-radius: 4px;
 }
 
-/* Cover photo skeleton */
 .profile-skeleton .sk-cover {
   width: 100%;
   height: 190px;
   border-radius: 0;
 }
 
-/* Avatar skeleton */
 .profile-skeleton .sk-avatar-wrap {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: -65px;
+  justify-content: center;
+  margin-top: -60px;
   position: relative;
   z-index: 2;
 }
 
 .profile-skeleton .sk-avatar {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
+  width: 128px;
+  height: 128px;
+  border-radius: 4px; /* Matches the square design */
   border: 4px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
-/* Name & bio skeleton */
 .profile-skeleton .sk-info {
   padding: 14px 16px 0;
   display: flex;
@@ -357,11 +688,10 @@
   border-radius: 4px;
 }
 
-/* Action buttons skeleton */
 .profile-skeleton .sk-buttons-row {
   display: flex;
   gap: 8px;
-  padding: 14px 12px 12px;
+  padding: 10px 16px;
   background: white;
   border-bottom: 1px solid var(--border);
 }
@@ -384,151 +714,7 @@
   border-radius: 4px;
 }
 
-/* Info section skeleton */
-.profile-skeleton .sk-section {
-  background: white;
-  padding: 12px 16px;
-  border-top: 8px solid var(--bg);
-}
-
-.profile-skeleton .sk-info-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.profile-skeleton .sk-info-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.profile-skeleton .sk-info-text {
-  height: 14px;
-  border-radius: 4px;
-}
-
-.profile-skeleton .sk-info-text.long { width: 60%; }
-.profile-skeleton .sk-info-text.medium { width: 50%; }
-.profile-skeleton .sk-info-text.short { width: 30%; }
-
-/* Photos section skeleton */
-.profile-skeleton .sk-photos-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.profile-skeleton .sk-photos-title {
-  width: 60px;
-  height: 16px;
-  border-radius: 4px;
-}
-
-.profile-skeleton .sk-photos-link {
-  width: 120px;
-  height: 14px;
-  border-radius: 4px;
-}
-
-.profile-skeleton .sk-photos-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-
-.profile-skeleton .sk-photo {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 2px;
-}
-
-/* Posts section skeleton */
-.profile-skeleton .sk-posts-header {
-  padding: 12px 16px 8px;
-}
-
-.profile-skeleton .sk-posts-title {
-  width: 110px;
-  height: 16px;
-  border-radius: 4px;
-}
-
-.profile-skeleton .sk-post-card {
-  background: white;
-  padding: 12px 16px;
-  border-top: 1px solid var(--border);
-}
-
-.profile-skeleton .sk-post-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.profile-skeleton .sk-post-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.profile-skeleton .sk-post-meta {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.profile-skeleton .sk-post-name {
-  width: 45%;
-  height: 12px;
-  border-radius: 4px;
-}
-
-.profile-skeleton .sk-post-time {
-  width: 25%;
-  height: 10px;
-  border-radius: 4px;
-}
-
-.profile-skeleton .sk-post-text {
-  height: 14px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.profile-skeleton .sk-post-text.full { width: 90%; }
-.profile-skeleton .sk-post-text.partial { width: 60%; }
-
-.profile-skeleton .sk-post-image {
-  width: 100%;
-  height: 260px;
-  border-radius: 4px;
-  margin-top: 4px;
-}
-
-.profile-skeleton .sk-post-actions {
-  display: flex;
-  gap: 0;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-}
-
-.profile-skeleton .sk-post-action {
-  flex: 1;
-  height: 14px;
-  border-radius: 4px;
-  margin: 0 20px;
-}
-
-/* ─── FADE TRANSITION for skeleton → real content ─────────────────────── */
-
+/* Shimmer Fade transitions */
 #profile-content {
   opacity: 0;
   transition: opacity 0.35s ease-in;

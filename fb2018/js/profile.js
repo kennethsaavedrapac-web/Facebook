@@ -188,75 +188,212 @@ window.ProfileStore = (() => {
 
   function buildProfileHeaderHTML(user, photosGridSlice) {
     return `
-      <img src="${user.cover}" class="profile-cover" alt="Portada" onerror="this.src='fb2018/Perfil/Portada.png'">
-      <div class="profile-avatar-wrap">
-        <img src="${user.avatar}" class="profile-avatar" onerror="this.src='fb2018/Perfil/PerfilFoto.png'">
-      </div>
-      <div class="profile-info">
-        <div class="profile-name">${user.name}</div>
-        ${user.bio ? `<div class="profile-bio">${user.bio}</div>` : ''}
-      </div>
-
-      <!-- Buttons row matching reference screenshot -->
-      <div class="profile-buttons-row">
-        <button class="btn-add-friend" id="btn-add-friend">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-            <path d="M15 14c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-9-4V7H4v3H1v2h3v3h2v-3h3v-2H6zm9-2c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
-          </svg>
-          <span>Agregar a amigos</span>
-        </button>
-        <button class="btn-msg" id="btn-profile-msg">
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.2 5.5 3.16 7.36V22l2.86-1.57c.82.23 1.68.35 2.58.35h.4c5.64 0 10-4.13 10-9.68C21 6.13 17.64 2 12 2zm1.08 13.02l-2.55-2.73L5.68 15l4.85-5.13 2.55 2.73L17.86 10l-4.78 5.02z"/>
-          </svg>
-          <span>Mensaje</span>
-        </button>
-        <button class="btn-more" id="btn-profile-more">•••</button>
-      </div>
-
-      <!-- Información section -->
-      <div class="profile-section">
-        <div class="profile-info-row">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          <div>Vive en <span class="bold-info">${user.city || 'Granada, Nicaragua'}</span></div>
-        </div>
-        <div class="profile-info-row">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-          <div>Fecha de nacimiento: <span class="bold-info">${user.birthday || '13 de octubre de 2005'}</span></div>
-        </div>
-        <div class="profile-info-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="1"/>
-            <circle cx="19" cy="12" r="1"/>
-            <circle cx="5" cy="12" r="1"/>
-          </svg>
-          <span>Ver tu información</span>
-        </div>
-      </div>
-
-      <!-- Fotos section -->
-      <div class="profile-section">
-        <div class="profile-photos-header">
-          <span class="profile-photos-title">Fotos</span>
-          <a href="#" class="profile-photos-link" id="view-all-photos-link">Ver todas las fotos</a>
-        </div>
-        ${photosGridSlice.length > 0 ? `
-          <div class="profile-photos-grid">
-            ${photosGridSlice.map(src => `<img src="${src}" loading="lazy" data-photo-profile="${src}">`).join('')}
+      <!-- Cover & Avatar Area -->
+      <div class="profile-cover-container">
+        <img src="${user.cover}" class="profile-cover" alt="Portada" onerror="this.src='fb2018/Perfil/Portada.png'">
+        ${user.id === 0 ? `
+          <div class="profile-cover-camera-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+              <path d="M9 2L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9z"/>
+            </svg>
+            <span>Agregar foto</span>
           </div>
-        ` : '<p style="color:var(--text-secondary);font-size:14px">Sin fotos.</p>'}
+        ` : ''}
       </div>
 
-      <!-- Publicaciones section -->
-      <div class="profile-section" style="padding-left: 0; padding-right: 0;">
-        <h3 style="padding-left: 16px;">Publicaciones</h3>
-        <div id="profile-posts-list"></div>
+      <div class="profile-avatar-outer-wrap">
+        <div class="profile-avatar-container">
+          <img src="${user.avatar}" class="profile-avatar" onerror="this.src='fb2018/Perfil/PerfilFoto.png'">
+          ${user.id === 0 ? `
+            <div class="profile-avatar-add-overlay">
+              <span class="plus-icon">+</span>
+              <span>Foto</span>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="profile-meta-info">
+        <div class="profile-name-centered">${user.name}</div>
+        ${user.id === 10 ? `<div class="profile-bio-sub">${user.bio}</div>` : ''}
+      </div>
+
+      <!-- Horizontal Actions Row -->
+      <div class="profile-actions-row-2018">
+        ${user.id === 0 ? `
+          <button class="action-btn-2018" id="action-btn-publish">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <span>Publicar</span>
+          </button>
+          <button class="action-btn-2018" id="action-btn-info-edit">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <span>Actualizar inf.</span>
+          </button>
+          <button class="action-btn-2018" id="action-btn-view-as">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3z"/></svg>
+            <span>Ver como</span>
+          </button>
+          <button class="action-btn-2018" id="btn-profile-more">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"/></svg>
+            <span>Más</span>
+          </button>
+        ` : `
+          <button class="action-btn-2018 btn-blue-theme" id="btn-add-friend">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span>Agregar a amigos</span>
+          </button>
+          <button class="action-btn-2018" id="btn-profile-msg">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+            <span>Mensaje</span>
+          </button>
+          <button class="action-btn-2018" id="btn-profile-more">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"/></svg>
+            <span>Más</span>
+          </button>
+        `}
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="profile-tabs-bar-2018">
+        <button class="profile-tab-btn active" data-profile-tab="informacion">Información</button>
+        <button class="profile-tab-btn" data-profile-tab="fotos">Fotos</button>
+        <button class="profile-tab-btn" data-profile-tab="amigos">Amigos</button>
+      </div>
+
+      <!-- Tabs Contents Container -->
+      <div class="profile-tab-contents">
+        <!-- Información / Timeline Tab Content -->
+        <div class="profile-tab-pane active" id="pane-informacion">
+          
+          <!-- Presentación (Info Card) -->
+          <div class="profile-card-2018 presentacion-card">
+            <div class="card-header-2018">
+              <span>Preséntate</span>
+              <button class="card-close-btn-2018">✕</button>
+            </div>
+            <div class="card-body-2018">
+              <div class="presentacion-subtitle">Personaliza la información que se ve en la parte superior de tu perfil.</div>
+              
+              <div class="presentacion-bio-section">
+                ${user.bio ? `<div class="presentacion-bio-text">${user.bio}</div>` : ''}
+                <a href="#" class="presentacion-link-blue" id="btn-edit-bio-mock">${user.bio ? 'Editar' : '+ Describe quién eres'}</a>
+              </div>
+
+              <div class="presentacion-details-list">
+                <div class="detail-item-2018">
+                  <svg class="detail-icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>
+                  <span>Vive en <span class="bold-text">${user.city || 'Granada, Nicaragua'}</span></span>
+                </div>
+                <div class="detail-item-2018">
+                  <svg class="detail-icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5z"/></svg>
+                  <span>De <span class="bold-text">${user.city || 'Granada, Nicaragua'}</span></span>
+                </div>
+                <div class="detail-item-2018">
+                  <svg class="detail-icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                  <span>Fecha de nacimiento: <span class="bold-text">${user.birthday || '13 de octubre de 2005'}</span></span>
+                </div>
+                <div class="detail-item-2018">
+                  <svg class="detail-icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                  <span>Amigos: <span class="bold-text">${user.friends || 842}</span></span>
+                </div>
+              </div>
+
+              ${user.id === 0 ? `
+                <div class="presentacion-links-box">
+                  <a href="#" class="presentacion-link-box-btn">
+                    <span>+ Agregar Instagram, sitios web y otros enlaces</span>
+                  </a>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Create Post Box -->
+          <div class="profile-card-2018 create-post-card-2018">
+            <div class="create-post-top-2018">
+              <img src="${DATA.me.avatar}" class="create-post-avatar-2018" alt="Tú">
+              <button class="create-post-input-2018">¿Qué estás pensando?</button>
+            </div>
+            <div class="create-post-bottom-2018">
+              <button class="create-post-btn-2018 btn-foto">
+                <svg viewBox="0 0 24 24" width="18" height="18" class="btn-icon-green"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                <span>Foto</span>
+              </button>
+              <button class="create-post-btn-2018 btn-lugar">
+                <svg viewBox="0 0 24 24" width="18" height="18" class="btn-icon-red"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5z"/></svg>
+                <span>Estoy aquí</span>
+              </button>
+              <button class="create-post-btn-2018 btn-acontecimiento">
+                <svg viewBox="0 0 24 24" width="18" height="18" class="btn-icon-blue"><path fill="currentColor" d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z"/></svg>
+                <span>Acontecimiento importante</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Fotos Card -->
+          <div class="profile-card-2018 shortcut-card-2018">
+            <div class="shortcut-header-2018">
+              <div class="shortcut-title-wrap">
+                <span class="shortcut-circle-icon icon-green">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><path fill="white" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                </span>
+                <span class="shortcut-title-text">Fotos</span>
+              </div>
+            </div>
+            <div class="shortcut-body-2018">
+              <div class="shortcut-empty-state">
+                <svg class="empty-icon-grey" viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                <div class="empty-text">Muestra a las personas lo que estuviste haciendo.</div>
+              </div>
+              <div class="shortcut-actions-2018">
+                <button class="shortcut-btn-2018" id="btn-photos-now-no">Ahora no</button>
+                <button class="shortcut-btn-2018 blue-text" id="btn-photos-add-photo">Agregar foto</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amigos Card -->
+          <div class="profile-card-2018 shortcut-card-2018">
+            <div class="shortcut-header-2018">
+              <div class="shortcut-title-wrap">
+                <span class="shortcut-circle-icon icon-pink">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><path fill="white" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                </span>
+                <span class="shortcut-title-text">Amigos</span>
+              </div>
+            </div>
+            <div class="shortcut-body-2018">
+              <div class="shortcut-empty-state">
+                <svg class="empty-icon-grey" viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                <div class="empty-text">Agrega amigos para empezar a ver sus novedades.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline Publicaciones Section -->
+          <div id="profile-posts-list"></div>
+          
+        </div>
+
+        <!-- Fotos Tab Content -->
+        <div class="profile-tab-pane" id="pane-fotos">
+          <div class="profile-card-2018">
+            <div class="card-header-2018 font-bold-header">Fotos de ${user.name}</div>
+            <div class="tab-photos-grid-2018">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Amigos Tab Content -->
+        <div class="profile-tab-pane" id="pane-amigos">
+          <div class="profile-card-2018">
+            <div class="card-header-2018 font-bold-header">Amigos de ${user.name}</div>
+            <div class="tab-friends-grid-2018">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -479,20 +616,147 @@ window.ProfileStore = (() => {
       renderPostsProgressively(postsContainer, userPosts, userPhotos);
     }
 
-    content.querySelectorAll('[data-photo-profile]').forEach(el => {
-      el.addEventListener('click', () => {
-        FeedStore.openPhoto(el.dataset.photoProfile, userPhotos);
+    // ── 2018 PROFILE EVENT BINDINGS ──
+
+    // 1. Tab Switching Logic
+    const tabBtns = content.querySelectorAll('.profile-tab-btn');
+    const tabPanes = content.querySelectorAll('.profile-tab-pane');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabName = btn.dataset.profileTab;
+        
+        // Update active tab button
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update active tab content pane
+        tabPanes.forEach(p => p.classList.remove('active'));
+        const activePane = content.querySelector(`#pane-${tabName}`);
+        if (activePane) activePane.classList.add('active');
+
+        // Dynamically load Photos grid on Photos tab click
+        if (tabName === 'fotos') {
+          const grid = activePane.querySelector('.tab-photos-grid-2018');
+          if (grid && !grid.dataset.rendered) {
+            grid.dataset.rendered = "true";
+            grid.innerHTML = userPhotos.map(src => `<img src="${src}" class="tab-photo-img-2018" data-photo-tab-view="${src}" loading="lazy">`).join('');
+            grid.querySelectorAll('[data-photo-tab-view]').forEach(img => {
+              img.addEventListener('click', () => {
+                FeedStore.openPhoto(img.dataset.photoTabView, userPhotos);
+              });
+            });
+          }
+        }
+
+        // Dynamically load Friends list on Friends tab click
+        if (tabName === 'amigos') {
+          const grid = activePane.querySelector('.tab-friends-grid-2018');
+          if (grid && !grid.dataset.rendered) {
+            grid.dataset.rendered = "true";
+            const friends = DATA.users.filter(u => u.id !== user.id);
+            grid.innerHTML = friends.map(u => `
+              <div class="tab-friend-card-2018" data-friend-id="${u.id}">
+                <img src="${u.avatar}" alt="${u.name}" class="tab-friend-avatar-2018" loading="lazy">
+                <div class="tab-friend-name-2018">${u.name}</div>
+              </div>
+            `).join('');
+            grid.querySelectorAll('.tab-friend-card-2018').forEach(card => {
+              card.addEventListener('click', () => {
+                const fid = parseInt(card.dataset.friendId);
+                Router.push('profile', { userId: fid });
+              });
+            });
+          }
+        }
       });
     });
 
-    const viewAllLink = content.querySelector('#view-all-photos-link');
-    if (viewAllLink) {
-      viewAllLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        Router.push('album');
+    // 2. Cover / Avatar Interaction
+    const coverOverlay = content.querySelector('.profile-cover-camera-overlay');
+    if (coverOverlay) {
+      coverOverlay.addEventListener('click', () => {
+        alert('Funcionalidad de cambiar foto de portada próximamente.');
+      });
+    }
+    const avatarOverlay = content.querySelector('.profile-avatar-add-overlay');
+    if (avatarOverlay) {
+      avatarOverlay.addEventListener('click', () => {
+        alert('Funcionalidad de cambiar foto de perfil próximamente.');
       });
     }
 
+    // 3. Actions Row Events (Josseling)
+    const publishBtn = content.querySelector('#action-btn-publish');
+    if (publishBtn) {
+      publishBtn.addEventListener('click', () => {
+        const targetCard = content.querySelector('.create-post-card-2018');
+        if (targetCard && scrollContainer) {
+          scrollContainer.scrollTo({
+            top: targetCard.offsetTop - 10,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
+
+    const infoBtn = content.querySelector('#action-btn-info-edit');
+    if (infoBtn) {
+      infoBtn.addEventListener('click', () => {
+        const targetCard = content.querySelector('.presentacion-card');
+        if (targetCard && scrollContainer) {
+          scrollContainer.scrollTo({
+            top: targetCard.offsetTop - 10,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
+
+    const viewAsBtn = content.querySelector('#action-btn-view-as');
+    if (viewAsBtn) {
+      viewAsBtn.addEventListener('click', () => {
+        alert('Esta es una vista previa de tu perfil (modo "Ver como").');
+      });
+    }
+
+    // 4. Create Post Box Handlers
+    const cpInput = content.querySelector('.create-post-input-2018');
+    if (cpInput) {
+      cpInput.addEventListener('click', () => {
+        alert('Funcionalidad de crear publicación próximamente.');
+      });
+    }
+    content.querySelectorAll('.create-post-btn-2018').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert('Funcionalidad próximamente.');
+      });
+    });
+
+    // 5. Bio and Info Mock Click Handlers
+    const editBioBtn = content.querySelector('#btn-edit-bio-mock');
+    if (editBioBtn) {
+      editBioBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Editar presentación próximamente.');
+      });
+    }
+
+    // 6. Shortcut Cards Event Handlers
+    const nowNoBtn = content.querySelector('#btn-photos-now-no');
+    if (nowNoBtn) {
+      nowNoBtn.addEventListener('click', () => {
+        const card = nowNoBtn.closest('.shortcut-card-2018');
+        if (card) card.style.display = 'none';
+      });
+    }
+    const addPhotoBtn = content.querySelector('#btn-photos-add-photo');
+    if (addPhotoBtn) {
+      addPhotoBtn.addEventListener('click', () => {
+        alert('Funcionalidad de subir fotos próximamente.');
+      });
+    }
+
+    // 7. Actions Row Events (Other Profiles)
     const msgBtn = content.querySelector('#btn-profile-msg');
     if (msgBtn) {
       msgBtn.addEventListener('click', () => {
@@ -506,13 +770,9 @@ window.ProfileStore = (() => {
       addFriendBtn.addEventListener('click', () => {
         if (addFriendBtn.classList.contains('active')) {
           addFriendBtn.classList.remove('active');
-          addFriendBtn.style.background = '#1877f2';
-          addFriendBtn.style.color = 'white';
           addFriendBtn.querySelector('span').textContent = 'Agregar a amigos';
         } else {
           addFriendBtn.classList.add('active');
-          addFriendBtn.style.background = '#e4e6eb';
-          addFriendBtn.style.color = '#1c1e21';
           addFriendBtn.querySelector('span').textContent = 'Solicitud enviada';
         }
       });
