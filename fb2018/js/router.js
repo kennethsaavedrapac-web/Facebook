@@ -87,29 +87,53 @@ window.Router = (() => {
   }
 
   function navigateToState(screen, params = {}) {
+    // 1. Save scroll position of the current active screen before hiding it
+    const currentActiveScreen = document.querySelector('.screen.active');
+    if (currentActiveScreen) {
+      if (currentActiveScreen.id === 'screen-feed') {
+        FeedStore.scrollPosition = currentActiveScreen.scrollTop;
+      } else if (currentActiveScreen.id === 'screen-profile') {
+        const scrollContainer = currentActiveScreen.querySelector('.profile-scroll-container');
+        if (scrollContainer) {
+          ProfileStore.scrollPosition = scrollContainer.scrollTop;
+        }
+      }
+    }
+
+    // 2. Transition screens in DOM
     showScreen(screen);
 
     if (screen === 'profile') {
       const uid = params.userId !== undefined ? params.userId : 0;
-      Profile.render(uid);
+      ProfileStore.render(uid);
     } else if (screen === 'album') {
-      Profile.renderAlbum();
+      ProfileStore.renderAlbum();
     } else if (screen === 'messenger') {
       Messenger.renderList();
     } else {
       // Tab navigation
       if (TAB_SCREENS.includes(screen)) {
-        showSkeletons(screen);
-        
-        setTimeout(() => {
-          if (screen === 'friends') {
-            renderFriends();
-          } else if (screen === 'notifications') {
-            Notifications.render();
-          } else if (screen === 'feed') {
-            Feed.renderFeedOnly();
+        if (screen === 'feed' && FeedStore.isRendered) {
+          // Restore Feed scroll position immediately
+          const feedScreen = document.getElementById('screen-feed');
+          if (feedScreen) {
+            requestAnimationFrame(() => {
+              feedScreen.scrollTop = FeedStore.scrollPosition || 0;
+            });
           }
-        }, 250);
+        } else {
+          showSkeletons(screen);
+          
+          setTimeout(() => {
+            if (screen === 'friends') {
+              renderFriends();
+            } else if (screen === 'notifications') {
+              Notifications.render();
+            } else if (screen === 'feed') {
+              FeedStore.renderFeedOnly();
+            }
+          }, 250);
+        }
       }
     }
   }

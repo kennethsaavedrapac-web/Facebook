@@ -45,7 +45,7 @@ window.Notifications = (() => {
           Router.push('feed');
           setTimeout(() => {
             // Find post 1 (Miraculous) or post 2 (BTS) to open comments
-            const targetPost = DATA.posts.find(p => p.userId === notif.userId) || DATA.posts[0];
+            const targetPost = FeedStore.posts.find(p => p.userId === notif.userId) || FeedStore.posts[0];
             if (targetPost) {
               Feed.openComments(targetPost.id);
             }

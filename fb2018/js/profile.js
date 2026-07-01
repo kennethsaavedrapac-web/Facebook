@@ -1,9 +1,7 @@
 // ─── PROFILE ──────────────────────────────────────────────────────────────────
 
-window.Profile = (() => {
+window.ProfileStore = (() => {
 
-  // ── STATIC PHOTO LIST (replaces HTTP HEAD scan of /Perfil) ──
-  // This was the #1 bottleneck: 19+ sequential fetch(HEAD) requests (~2-4s).
   const KNOWN_PHOTOS = [];
   for (let i = 1; i <= 18; i++) {
     KNOWN_PHOTOS.push(`fb2018/Perfil/Foto${i}.png`);
@@ -11,6 +9,7 @@ window.Profile = (() => {
 
   let detectedPhotos = [];
   let profilePosts = [];
+  let scrollPosition = 0;
 
   // ── IN-MEMORY CACHE ──
   let _cacheUserId = null;
@@ -19,7 +18,6 @@ window.Profile = (() => {
   let _cacheUserPosts = null;
   let _dataInitialized = false;
 
-  // Chronological list of dates for the 18 photos from May 1 to June 30, 2018.
   const DATES = [
     '2 de mayo de 2018 a las 14:32',   // Foto1.png (oldest)
     '5 de mayo de 2018 a las 11:15',   // Foto2.png
@@ -41,7 +39,6 @@ window.Profile = (() => {
     '29 de junio de 2018 a las 20:05'  // Foto18.png (newest, shown first)
   ];
 
-  // Captions matching a girl's Facebook profile in 2018.
   const CAPTIONS = {
     18: 'Un día increíble con personas increíbles ✨🌻 #bendecida',
     17: 'Sonríe, que la vida es bella y Dios es bueno 🌸✨',
@@ -62,6 +59,57 @@ window.Profile = (() => {
     2: 'Sonreír no cuesta nada y alegra el día 😊💖',
     1: 'Empezando mayo con la mejor actitud y la bendición de Dios 🙏🌱'
   };
+
+  function privacyIcon(p) {
+    if (p === 'public') return '🌐';
+    if (p === 'friends') return '👥';
+    return '🔒';
+  }
+
+  function imageGrid(images) {
+    if (!images || images.length === 0) return '';
+    const n = images.length;
+    if (n === 1) {
+      return `<div class="post-images img-grid-1"><img src="${images[0]}" loading="lazy" data-photo="${images[0]}"></div>`;
+    }
+    if (n === 2) {
+      return `<div class="post-images img-grid-2">
+        ${images.map(u => `<img src="${u}" loading="lazy" data-photo="${u}">`).join('')}
+      </div>`;
+    }
+    if (n === 3) {
+      return `<div class="post-images img-grid-3">
+        ${images.map(u => `<img src="${u}" loading="lazy" data-photo="${u}">`).join('')}
+      </div>`;
+    }
+    const visible = images.slice(0, 4);
+    const extra = n - 4;
+    return `<div class="post-images img-grid-4">
+      ${visible.map((u, i) => {
+        if (i === 3 && extra > 0) {
+          return `<div class="img-more" data-photo="${u}"><img src="${u}" loading="lazy"><div class="img-more-count">+${extra + 1}</div></div>`;
+        }
+        return `<img src="${u}" loading="lazy" data-photo="${u}">`;
+      }).join('')}
+    </div>`;
+  }
+
+  function formatNumber(num) {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace('.0', '') + 'K';
+    }
+    return num;
+  }
+
+  function reactionSummary(reactions) {
+    const entries = Object.entries(reactions || {});
+    if (entries.length === 0) return '';
+    const total = entries.reduce((s, [, v]) => s + v, 0);
+    const circles = entries.slice(0, 3).map(([k]) =>
+      `<span class="reaction-circle rc-${k}">${{like:'👍',love:'❤️',haha:'😂',wow:'😮',sad:'😢',angry:'😡'}[k]}</span>`
+    ).join('');
+    return `<div class="post-reactions-summary"><div class="reaction-circles">${circles}</div> <span>${formatNumber(total)}</span></div>`;
+  }
 
   function generatePosts(photos) {
     const generated = [];
@@ -115,31 +163,20 @@ window.Profile = (() => {
     return generated;
   }
 
-  // ── SYNCHRONOUS init (no HTTP requests) ──
   function initProfileData() {
     if (_dataInitialized) return;
     _dataInitialized = true;
 
-    // Use the static known list directly — no fetch() calls needed
     detectedPhotos = KNOWN_PHOTOS.slice();
-
     profilePosts = generatePosts(detectedPhotos);
-    
-    // Inject generated posts into global DATA.posts to support reactions and comments
-    profilePosts.forEach(post => {
-      if (!DATA.posts.some(p => p.id === post.id)) {
-        DATA.posts.push(post);
-      }
-    });
+    // Profile posts are NOT injected into DATA.posts anymore.
   }
 
-  // ── PRELOAD CRITICAL IMAGES ──
   function preloadCriticalImages(userPhotos) {
     const criticalSrcs = [
       'fb2018/Perfil/PerfilFoto.png',
       'fb2018/Perfil/Portada.png'
     ];
-    // Add images from the first 2 posts (newest first)
     if (userPhotos.length > 0) criticalSrcs.push(userPhotos[0]);
     if (userPhotos.length > 1) criticalSrcs.push(userPhotos[1]);
 
@@ -149,7 +186,6 @@ window.Profile = (() => {
     });
   }
 
-  // ── BUILD PROFILE HEADER HTML (everything above posts) ──
   function buildProfileHeaderHTML(user, photosGridSlice) {
     return `
       <img src="${user.cover}" class="profile-cover" alt="Portada" onerror="this.src='fb2018/Perfil/Portada.png'">
@@ -225,20 +261,126 @@ window.Profile = (() => {
     `;
   }
 
-  // ── PROGRESSIVE FEED RENDERING ──
-  // Renders first 2 posts immediately, then batches of 4 via requestIdleCallback/setTimeout
+  function renderPost(post) {
+    const user = DATA.users.find(u => u.id === post.userId) || DATA.me;
+    const hasReaction = post._myReaction;
+    
+    const activeReactionColor = hasReaction ? 'var(--fb-blue)' : 'currentColor';
+    const activeText = hasReaction 
+      ? { like:'Me gusta', love:'Me encanta', haha:'Haha', wow:'Asombra', sad:'Entristece', angry:'Enoja' }[hasReaction]
+      : 'Me gusta';
+
+    return `
+    <div class="post-card" data-post-id="${post.id}">
+      <div class="post-header">
+        <img src="${user.avatar}" class="avatar" data-profile="${user.id}">
+        <div class="post-info">
+          <div class="post-author" data-profile="${user.id}">${user.name}</div>
+          <div class="post-meta">${post.time} · ${privacyIcon(post.privacy)}</div>
+        </div>
+        <button class="post-options-btn">•••</button>
+      </div>
+      ${post.text ? `<div class="post-text">${post.text}</div>` : ''}
+      ${imageGrid(post.images)}
+      <div class="post-stats">
+        ${reactionSummary(post.reactions)}
+        <span class="post-stats-comments">${post.commentCount} comentarios</span>
+      </div>
+      <div class="post-actions">
+        <button class="post-action-btn btn-like ${hasReaction ? 'reacted' : ''}" data-post-id="${post.id}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${activeReactionColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+          <span style="color: ${activeReactionColor}">${activeText}</span>
+        </button>
+        <button class="post-action-btn btn-comment" data-post-id="${post.id}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Comentar
+        </button>
+        <button class="post-action-btn btn-share" data-post-id="${post.id}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Compartir
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function bindPostEvents(card) {
+    if (card.dataset.eventsBound) return;
+    card.dataset.eventsBound = "true";
+
+    // Profile navigation
+    card.querySelectorAll('[data-profile]').forEach(el => {
+      el.addEventListener('click', e => {
+        const uid = parseInt(el.dataset.profile);
+        Router.push('profile', { userId: uid });
+      });
+    });
+
+    // Photo viewer
+    card.querySelectorAll('[data-photo]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        const postCard = el.closest('.post-card');
+        const photoEls = Array.from(postCard.querySelectorAll('[data-photo]'));
+        const photos = photoEls.map(img => img.dataset.photo || img.closest('.img-more').dataset.photo);
+        FeedStore.openPhoto(el.dataset.photo || el.closest('.img-more').dataset.photo, photos);
+      });
+    });
+
+    // Like button
+    const likeBtn = card.querySelector('.btn-like');
+    if (likeBtn) {
+      const postId = likeBtn.dataset.postId;
+      likeBtn.addEventListener('click', () => {
+        const post = window.getPostById(postId);
+        if (!post) return;
+
+        if (!post._myReaction) {
+          post._myReaction = 'like';
+          post.reactions.like = (post.reactions.like || 0) + 1;
+        } else {
+          post.reactions[post._myReaction]--;
+          delete post._myReaction;
+        }
+        
+        window.updatePostCardInDOM(postId, post);
+      });
+    }
+
+    // Comment button
+    const commentBtn = card.querySelector('.btn-comment');
+    if (commentBtn) {
+      commentBtn.addEventListener('click', () => {
+        const postId = commentBtn.dataset.postId;
+        FeedStore.openComments(postId);
+      });
+    }
+
+    // Share button
+    const shareBtn = card.querySelector('.btn-share');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        alert('Publicación compartida en tu biografía.');
+      });
+    }
+  }
+
+  function bindFeedEvents(container) {
+    if (!container) return;
+    container.querySelectorAll('.post-card').forEach(card => {
+      bindPostEvents(card);
+    });
+  }
+
   function renderPostsProgressively(container, posts, userPhotos) {
     if (!container || posts.length === 0) return;
 
     const INITIAL_BATCH = 2;
     const BATCH_SIZE = 4;
 
-    // Render first 2 posts immediately
     const initialPosts = posts.slice(0, INITIAL_BATCH);
-    container.innerHTML = initialPosts.map(post => Feed.renderPost(post)).join('');
-    Feed.bindFeedEvents(container);
+    container.innerHTML = initialPosts.map(post => renderPost(post)).join('');
+    bindFeedEvents(container);
 
-    // Render remaining posts progressively
     let offset = INITIAL_BATCH;
 
     function renderNextBatch() {
@@ -247,7 +389,7 @@ window.Profile = (() => {
       const batch = posts.slice(offset, offset + BATCH_SIZE);
       const fragment = document.createDocumentFragment();
       const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = batch.map(post => Feed.renderPost(post)).join('');
+      tempDiv.innerHTML = batch.map(post => renderPost(post)).join('');
 
       while (tempDiv.firstChild) {
         fragment.appendChild(tempDiv.firstChild);
@@ -256,8 +398,7 @@ window.Profile = (() => {
       container.appendChild(fragment);
       offset += BATCH_SIZE;
 
-      // Re-bind events only on the newly added posts
-      Feed.bindFeedEvents(container);
+      bindFeedEvents(container);
 
       if (offset < posts.length) {
         if (typeof requestIdleCallback === 'function') {
@@ -277,13 +418,11 @@ window.Profile = (() => {
     }
   }
 
-  // ── MAIN RENDER (optimized) ──
   function render(userId) {
     const content = document.getElementById('profile-content');
     const skeletonContainer = document.getElementById('profile-skeleton-container');
     if (!content) return;
 
-    // ── Step 1: Show skeleton, hide real content ──
     content.classList.remove('profile-loaded');
     content.innerHTML = '';
     if (skeletonContainer) {
@@ -291,11 +430,9 @@ window.Profile = (() => {
       skeletonContainer.style.display = '';
     }
 
-    // Scroll to top
     const scrollContainer = content.closest('.profile-scroll-container');
     if (scrollContainer) scrollContainer.scrollTop = 0;
 
-    // ── Step 2: Load data (synchronous — no HTTP requests) ──
     initProfileData();
     
     const user = DATA.users.find(u => u.id === userId) || DATA.me;
@@ -305,18 +442,16 @@ window.Profile = (() => {
     
     if (user.id === 0) {
       userPhotos = [...detectedPhotos].reverse(); // newest first
-      userPosts = DATA.posts.filter(p => p.userId === 0);
+      userPosts = profilePosts;
     } else {
-      userPosts = DATA.posts.filter(p => p.userId === user.id);
+      userPosts = FeedStore.posts.filter(p => p.userId === user.id);
       userPhotos = userPosts.flatMap(p => p.images || []).slice(0, 9);
     }
 
     const photosGridSlice = userPhotos.slice(0, 6);
 
-    // ── Step 3: Preload only critical images ──
     preloadCriticalImages(userPhotos);
 
-    // ── Step 4: Use cached HTML or build new ──
     if (_cacheUserId === userId && _cacheHTML) {
       content.innerHTML = _cacheHTML;
     } else {
@@ -328,7 +463,6 @@ window.Profile = (() => {
       _cacheUserPosts = userPosts;
     }
 
-    // ── Step 5: Show content immediately (no image wait!) ──
     if (skeletonContainer) {
       skeletonContainer.classList.add('fade-out');
       setTimeout(() => {
@@ -340,22 +474,17 @@ window.Profile = (() => {
       content.classList.add('profile-loaded');
     });
 
-    // ── Step 6: Progressive post rendering ──
     const postsContainer = content.querySelector('#profile-posts-list');
     if (postsContainer) {
       renderPostsProgressively(postsContainer, userPosts, userPhotos);
     }
 
-    // ── Step 7: Bind events ──
-
-    // Bind photo clicks in the grid
     content.querySelectorAll('[data-photo-profile]').forEach(el => {
       el.addEventListener('click', () => {
-        Feed.openPhoto(el.dataset.photoProfile, userPhotos);
+        FeedStore.openPhoto(el.dataset.photoProfile, userPhotos);
       });
     });
 
-    // Bind click for "Ver todas las fotos"
     const viewAllLink = content.querySelector('#view-all-photos-link');
     if (viewAllLink) {
       viewAllLink.addEventListener('click', (e) => {
@@ -364,16 +493,14 @@ window.Profile = (() => {
       });
     }
 
-    // Bind Message button
     const msgBtn = content.querySelector('#btn-profile-msg');
     if (msgBtn) {
       msgBtn.addEventListener('click', () => {
-        const threadId = 1; // Open default chat thread
+        const threadId = 1;
         Messenger.openChat(threadId);
       });
     }
 
-    // Bind add friend button simulation
     const addFriendBtn = content.querySelector('#btn-add-friend');
     if (addFriendBtn) {
       addFriendBtn.addEventListener('click', () => {
@@ -396,10 +523,9 @@ window.Profile = (() => {
     const albumContent = document.getElementById('album-content');
     if (!albumContent) return;
 
-    // Ensure data is ready (synchronous)
     initProfileData();
 
-    const reversedPhotos = [...detectedPhotos].reverse(); // newest first
+    const reversedPhotos = [...detectedPhotos].reverse();
 
     albumContent.innerHTML = `
       <div class="album-grid">
@@ -407,13 +533,26 @@ window.Profile = (() => {
       </div>
     `;
 
-    // Bind click to open photo viewer with the full list of photos
     albumContent.querySelectorAll('[data-photo-album]').forEach(el => {
       el.addEventListener('click', () => {
-        Feed.openPhoto(el.dataset.photoAlbum, reversedPhotos);
+        FeedStore.openPhoto(el.dataset.photoAlbum, reversedPhotos);
       });
     });
   }
 
-  return { render, renderAlbum, initProfileData };
+  return {
+    get posts() { return profilePosts; },
+    set posts(v) { profilePosts = v; },
+    get scrollPosition() { return scrollPosition; },
+    set scrollPosition(v) { scrollPosition = v; },
+    
+    render,
+    renderAlbum,
+    initProfileData,
+    renderPost,
+    bindPostEvents
+  };
 })();
+
+window.Profile = window.ProfileStore;
+
