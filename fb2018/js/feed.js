@@ -256,20 +256,39 @@ window.FeedStore = (() => {
   }
 
   // ── PHOTO VIEWER ───────────────────────────────────────────────────────────
+
+  // Public entry point: registers a history entry then shows the photo.
   function openPhoto(src, photos = []) {
+    const list = photos.length > 0 ? photos : [src];
+    const index = list.indexOf(src);
+    const resolvedIndex = index === -1 ? 0 : index;
+
+    document.dispatchEvent(new CustomEvent('fb:photoOpened'));
+
+    // Push to history so Atrás closes the photo instead of exiting the app.
+    if (window.NavManager && NavManager.appReady) {
+      NavManager.openModal('photo', { src: list[resolvedIndex], photos: list, index: resolvedIndex });
+    } else {
+      // Fallback during pre-login (shouldn't happen, but just in case)
+      _showPhotoDOM(src, list, resolvedIndex);
+    }
+  }
+
+  // Internal DOM renderer — called by NavManager on pushState and on popstate restore.
+  function _showPhotoDOM(src, photos, index) {
     const viewer = document.getElementById('photo-viewer');
     if (!viewer) return;
 
     currentPhotoList = photos.length > 0 ? photos : [src];
-    currentPhotoIndex = currentPhotoList.indexOf(src);
+    currentPhotoIndex = (index !== undefined && index >= 0) ? index : currentPhotoList.indexOf(src);
     if (currentPhotoIndex === -1) currentPhotoIndex = 0;
 
-    document.dispatchEvent(new CustomEvent('fb:photoOpened'));
+    const activeSrc = currentPhotoList[currentPhotoIndex] || src;
 
     viewer.innerHTML = `
       <button id="photo-close">✕</button>
       <div class="pv-wrapper" id="pv-wrapper">
-        <img id="photo-img" src="${src}" alt="" style="transform: translate3d(0, 0, 0) scale(1)">
+        <img id="photo-img" src="${activeSrc}" alt="" style="transform: translate3d(0, 0, 0) scale(1)">
       </div>
       ${currentPhotoList.length > 1 ? `
         <button class="pv-nav-btn prev" id="pv-prev">‹</button>
@@ -279,11 +298,10 @@ window.FeedStore = (() => {
 
     viewer.classList.remove('hidden');
 
-    document.getElementById('photo-close').onclick = closePhoto;
+    // Close button → go back in history (NavManager/browser will call _closePhotoDOM)
+    document.getElementById('photo-close').onclick = () => NavManager.pop();
     document.getElementById('pv-wrapper').onclick = (e) => {
-      if (e.target.id === 'pv-wrapper') {
-        closePhoto();
-      }
+      if (e.target.id === 'pv-wrapper') NavManager.pop();
     };
 
     if (currentPhotoList.length > 1) {
@@ -315,7 +333,8 @@ window.FeedStore = (() => {
     }
   }
 
-  function closePhoto() {
+  // DOM-only close (no history manipulation — NavManager calls this from popstate)
+  function _closePhotoDOM() {
     const viewer = document.getElementById('photo-viewer');
     if (viewer) {
       viewer.classList.add('hidden');
@@ -323,8 +342,27 @@ window.FeedStore = (() => {
     }
   }
 
+  // Legacy alias kept for callers that still call closePhoto() directly
+  function closePhoto() {
+    NavManager.pop();
+  }
+
   // ── COMMENTS SHEET ─────────────────────────────────────────────────────────
+
+  // Public entry point: registers a history entry then shows the sheet.
   function openComments(postId) {
+    const post = window.getPostById(postId);
+    if (!post) return;
+
+    if (window.NavManager && NavManager.appReady) {
+      NavManager.openModal('comments', { postId });
+    } else {
+      _showCommentsDOM(postId);
+    }
+  }
+
+  // Internal DOM renderer — called by NavManager on pushState and on popstate restore.
+  function _showCommentsDOM(postId) {
     const post = window.getPostById(postId);
     const sheet = document.getElementById('comments-sheet');
     const backdrop = document.getElementById('comments-backdrop');
@@ -343,16 +381,14 @@ window.FeedStore = (() => {
     }).join('');
 
     const inputRowImg = sheet.querySelector('#comments-input-row img');
-    if (inputRowImg) {
-      inputRowImg.src = DATA.me.avatar;
-    }
+    if (inputRowImg) inputRowImg.src = DATA.me.avatar;
 
     sheet.classList.remove('hidden');
     backdrop.classList.remove('hidden');
 
     const sendBtn = document.getElementById('comment-send');
     const input = document.getElementById('comment-input');
-    
+
     sendBtn.onclick = () => {
       const text = input.value.trim();
       if (!text) return;
@@ -360,16 +396,22 @@ window.FeedStore = (() => {
       post.comments.push({ userId: 0, text });
       post.commentCount++;
       input.value = '';
-      openComments(postId); // reload
-      
-      // Update comment counter in post card
+      _showCommentsDOM(postId); // reload in place
       window.updatePostCardInDOM(postId, post);
     };
   }
 
+  // DOM-only close (NavManager calls this from popstate)
+  function _closeCommentsDOM() {
+    const sheet = document.getElementById('comments-sheet');
+    const backdrop = document.getElementById('comments-backdrop');
+    if (sheet) sheet.classList.add('hidden');
+    if (backdrop) backdrop.classList.add('hidden');
+  }
+
+  // Legacy alias: calling closeComments() goes back in history.
   function closeComments() {
-    document.getElementById('comments-sheet').classList.add('hidden');
-    document.getElementById('comments-backdrop').classList.add('hidden');
+    NavManager.pop();
   }
 
   // ── INIT ───────────────────────────────────────────────────────────────────
@@ -380,6 +422,7 @@ window.FeedStore = (() => {
     renderStories();
     renderFeedOnly();
 
+    // Comments close → go back (history.back fires popstate → _closeCommentsDOM)
     document.getElementById('comments-close').onclick = closeComments;
     document.getElementById('comments-backdrop').onclick = closeComments;
 
@@ -419,10 +462,15 @@ window.FeedStore = (() => {
     set scrollPosition(v) { scrollPosition = v; },
     get isRendered() { return isRendered; },
     set isRendered(v) { isRendered = v; },
-    
+
     init,
     openPhoto,
     openComments,
+    // Internal methods exposed for NavManager to call on popstate
+    _showPhotoDOM,
+    _closePhotoDOM,
+    _showCommentsDOM,
+    _closeCommentsDOM,
     renderFeedOnly,
     renderPost,
     bindFeedEvents,

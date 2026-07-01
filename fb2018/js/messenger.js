@@ -23,12 +23,33 @@ window.Messenger = (() => {
     `;
 
     content.querySelectorAll('[data-thread]').forEach(el => {
-      el.addEventListener('click', () => openChat(parseInt(el.dataset.thread)));
+      el.addEventListener('click', () => {
+        const threadId = parseInt(el.dataset.thread);
+        // Push chat state to history so Atrás goes back to the thread list
+        if (window.NavManager && NavManager.appReady) {
+          NavManager.push('messenger-chat', { threadId });
+        } else {
+          openChatDOM(threadId);
+        }
+      });
     });
   }
 
+  // openChat is now the public entry point that pushes history.
+  // It delegates DOM rendering to openChatDOM.
   function openChat(threadId) {
+    if (window.NavManager && NavManager.appReady) {
+      NavManager.push('messenger-chat', { threadId });
+    } else {
+      openChatDOM(threadId);
+    }
+  }
+
+  // openChatDOM is the internal DOM renderer called both by openChat
+  // and by NavManager._restoreState on popstate.
+  function openChatDOM(threadId) {
     const thread = DATA.threads.find(t => t.id === threadId);
+    if (!thread) return;
     const user = DATA.users.find(u => u.id === thread.userId);
     thread.unread = false;
 
@@ -63,8 +84,10 @@ window.Messenger = (() => {
     const msgs = content.querySelector('#chat-messages');
     msgs.scrollTop = msgs.scrollHeight;
 
-    // Back button
-    content.querySelector('#back-to-threads').addEventListener('click', renderList);
+    // Back button → history.back() (NavManager will restore messenger-list state)
+    content.querySelector('#back-to-threads').addEventListener('click', () => {
+      NavManager.pop();
+    });
 
     // Send message
     const sendBtn = content.querySelector('#chat-send');
@@ -93,7 +116,6 @@ window.Messenger = (() => {
         msgs.appendChild(rb);
         msgs.scrollTop = msgs.scrollHeight;
 
-        // Badge
         document.dispatchEvent(new CustomEvent('fb:newMessage', { detail: { threadId } }));
       }, 1200 + Math.random() * 800);
     }
@@ -101,8 +123,10 @@ window.Messenger = (() => {
     sendBtn.addEventListener('click', sendMessage);
     input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
-    screen.classList.remove('hidden');
-    screen.classList.add('active');
+    if (screen) {
+      screen.classList.remove('hidden');
+      screen.classList.add('active');
+    }
   }
 
   function init() {
@@ -112,5 +136,5 @@ window.Messenger = (() => {
     });
   }
 
-  return { init, renderList, openChat };
+  return { init, renderList, openChat, openChatDOM };
 })();

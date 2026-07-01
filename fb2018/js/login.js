@@ -116,6 +116,15 @@ window.LoginScreen = (() => {
     setTimeout(() => {
       loadingEl.classList.add('hidden');
       loadingEl.classList.remove('fade-out');
+
+      // ── NAVIGATION: establish the base history state ────────────────────────
+      // replaceState (no new back entry) so "feed" is the floor of the stack.
+      // Once the user is here, any further pushState will be navigable with Atrás
+      // but they can never go back PAST the feed (which would close the app).
+      if (window.NavManager) {
+        NavManager.replace('feed', {});
+        NavManager.setAppReady();
+      }
     }, 350);
   }
 

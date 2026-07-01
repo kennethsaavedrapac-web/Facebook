@@ -1,39 +1,13 @@
 // ─── ROUTER ───────────────────────────────────────────────────────────────────
+// Thin adapter layer. All actual history management is done by NavManager.
+// Router.push / Router.pop remain as the public API so the rest of the app
+// (EventManager, profile.js, feed.js, etc.) doesn't need to change its call sites.
 
 window.Router = (() => {
 
   const TAB_SCREENS = ['feed', 'friends', 'notifications', 'menu'];
 
-  function showScreen(name) {
-    const target = document.getElementById(`screen-${name}`);
-    
-    // Hide all non-overlay screens
-    document.querySelectorAll('.screen:not(.overlay)').forEach(s => s.classList.remove('active'));
-    // Hide overlays
-    document.querySelectorAll('.screen.overlay').forEach(s => {
-      s.classList.add('hidden');
-      s.classList.remove('active');
-    });
-
-    if (target) {
-      target.classList.remove('hidden');
-      target.classList.add('active');
-    }
-
-    // Update tab active state
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const tab = document.querySelector(`.tab[data-screen="${name}"]`);
-    if (tab) tab.classList.add('active');
-
-    // Update sliding indicator line
-    const index = TAB_SCREENS.indexOf(name);
-    if (index !== -1) {
-      const indicator = document.getElementById('tab-indicator');
-      if (indicator) {
-        indicator.style.transform = `translateX(${index * 100}%)`;
-      }
-    }
-  }
+  // ── Skeleton loaders ─────────────────────────────────────────────────────────
 
   function showSkeletons(screen) {
     if (screen === 'feed') {
@@ -68,7 +42,6 @@ window.Router = (() => {
             </div>
           </div>`).join('');
       }
-
     } else if (screen === 'notifications') {
       const list = document.getElementById('notif-list');
       if (list) {
@@ -86,23 +59,9 @@ window.Router = (() => {
     }
   }
 
-  function navigateToState(screen, params = {}) {
-    // 1. Save scroll position of the current active screen before hiding it
-    const currentActiveScreen = document.querySelector('.screen.active');
-    if (currentActiveScreen) {
-      if (currentActiveScreen.id === 'screen-feed') {
-        FeedStore.scrollPosition = currentActiveScreen.scrollTop;
-      } else if (currentActiveScreen.id === 'screen-profile') {
-        const scrollContainer = currentActiveScreen.querySelector('.profile-scroll-container');
-        if (scrollContainer) {
-          ProfileStore.scrollPosition = scrollContainer.scrollTop;
-        }
-      }
-    }
+  // ── Screen content loaders (called after NavManager shows the screen) ─────────
 
-    // 2. Transition screens in DOM
-    showScreen(screen);
-
+  function loadScreenContent(screen, params = {}) {
     if (screen === 'profile') {
       const uid = params.userId !== undefined ? params.userId : 0;
       ProfileStore.render(uid);
@@ -110,69 +69,53 @@ window.Router = (() => {
       ProfileStore.renderAlbum();
     } else if (screen === 'messenger') {
       Messenger.renderList();
-    } else {
-      // Tab navigation
-      if (TAB_SCREENS.includes(screen)) {
-        if (screen === 'feed' && FeedStore.isRendered) {
-          // Restore Feed scroll position immediately
-          const feedScreen = document.getElementById('screen-feed');
-          if (feedScreen) {
-            requestAnimationFrame(() => {
-              feedScreen.scrollTop = FeedStore.scrollPosition || 0;
-            });
-          }
+    } else if (TAB_SCREENS.includes(screen)) {
+      if (screen === 'feed') {
+        if (FeedStore.isRendered) {
+          // Scroll restoration is handled by NavManager
         } else {
-          showSkeletons(screen);
-          
-          setTimeout(() => {
-            if (screen === 'friends') {
-              renderFriends();
-            } else if (screen === 'notifications') {
-              Notifications.render();
-            } else if (screen === 'feed') {
-              FeedStore.renderFeedOnly();
-            }
-          }, 250);
+          showSkeletons('feed');
+          setTimeout(() => FeedStore.renderFeedOnly(), 250);
         }
+      } else {
+        showSkeletons(screen);
+        setTimeout(() => {
+          if (screen === 'friends') renderFriends();
+          else if (screen === 'notifications') Notifications.render();
+        }, 250);
       }
     }
   }
 
+  // ── Public push ──────────────────────────────────────────────────────────────
+
   function push(screen, params = {}) {
-    if (TAB_SCREENS.includes(screen)) {
-      history.replaceState({ screen, params }, '', '#' + screen);
-      navigateToState(screen, params);
-    } else {
-      history.pushState({ screen, params }, '', '#' + screen);
-      navigateToState(screen, params);
-    }
+    // NavManager handles history + DOM transition
+    NavManager.push(screen, params);
+    // Load content after DOM is shown
+    loadScreenContent(screen, params);
   }
 
   function pop() {
-    history.back();
+    NavManager.pop();
   }
 
+  // ── Tab navigation ───────────────────────────────────────────────────────────
+
   function init() {
-    // Setup initial state
-    if (!history.state || !history.state.screen) {
-      const initialScreen = location.hash.replace('#', '') || 'feed';
-      const validScreen = TAB_SCREENS.includes(initialScreen) ? initialScreen : 'feed';
-      history.replaceState({ screen: validScreen, params: {} }, '', '#' + validScreen);
-      navigateToState(validScreen);
-    } else {
-      navigateToState(history.state.screen, history.state.params);
-    }
+    // Initialize NavManager popstate listener
+    NavManager.init();
 
-    // Popstate history listener
-    window.addEventListener('popstate', (e) => {
-      if (e.state && e.state.screen) {
-        navigateToState(e.state.screen, e.state.params);
-      } else {
-        navigateToState('feed');
-      }
-    });
+    // Setup initial state: the base "feed" entry that never gets popped beyond
+    // (the browser will close the PWA if the user goes back past this)
+    const initialRoute = location.hash.replace('#', '') || 'feed';
+    const validRoute = TAB_SCREENS.includes(initialRoute) ? initialRoute : 'feed';
 
-    // Tab navigation clicks
+    // Replace state (no back entry) for the base screen
+    NavManager.replace(validRoute, {});
+    _showInitialScreen(validRoute);
+
+    // Tab click handlers
     document.querySelectorAll('.tab[data-screen]').forEach(tab => {
       tab.addEventListener('click', () => {
         const screen = tab.dataset.screen;
@@ -180,22 +123,18 @@ window.Router = (() => {
       });
     });
 
-    // Back buttons click bindings
+    // Back buttons (← arrows in headers of overlay screens)
     document.querySelectorAll('[data-back]').forEach(btn => {
       btn.addEventListener('click', pop);
     });
 
     const profileBackBtn = document.getElementById('profile-back-btn');
-    if (profileBackBtn) {
-      profileBackBtn.addEventListener('click', pop);
-    }
+    if (profileBackBtn) profileBackBtn.addEventListener('click', pop);
 
     const albumBackBtn = document.getElementById('album-back-btn');
-    if (albumBackBtn) {
-      albumBackBtn.addEventListener('click', pop);
-    }
+    if (albumBackBtn) albumBackBtn.addEventListener('click', pop);
 
-    // Profile menu row click binding
+    // Menu > profile row
     const menuProfileRow = document.getElementById('menu-profile-row');
     if (menuProfileRow) {
       const menuAvatar = menuProfileRow.querySelector('img');
@@ -209,14 +148,42 @@ window.Router = (() => {
     }
   }
 
+  // ── Show initial screen without pushing history ──────────────────────────────
 
+  function _showInitialScreen(screen) {
+    // Show the correct tab screen on first load
+    document.querySelectorAll('.screen:not(.overlay)').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen.overlay').forEach(s => {
+      s.classList.add('hidden');
+      s.classList.remove('active');
+    });
+
+    const target = document.getElementById(`screen-${screen}`);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector(`.tab[data-screen="${screen}"]`);
+    if (tab) tab.classList.add('active');
+
+    const TAB_SCREENS_LOCAL = ['feed', 'friends', 'notifications', 'menu'];
+    const index = TAB_SCREENS_LOCAL.indexOf(screen);
+    if (index !== -1) {
+      const indicator = document.getElementById('tab-indicator');
+      if (indicator) indicator.style.transform = `translateX(${index * 100}%)`;
+    }
+
+    loadScreenContent(screen);
+  }
+
+  // ── Friends list renderer ────────────────────────────────────────────────────
 
   function renderFriends() {
     const list = document.getElementById('friends-list');
+    if (!list) return;
     const pendingRequests = DATA.friendRequests.length;
-    
+
     let htmlContent = '';
-    
+
     if (pendingRequests > 0) {
       htmlContent += `
         <div style="padding:12px 16px;font-weight:700;font-size:15px;background:white;border-bottom:1px solid var(--border)">
@@ -274,12 +241,11 @@ window.Router = (() => {
   return { init, push, pop, renderFriends };
 })();
 
-// FRIEND REQUEST ACTIONS
+// ── FRIEND REQUEST ACTIONS ───────────────────────────────────────────────────
 function acceptFriendRequest(btn, reqId) {
   const card = btn.closest('.friend-request-card');
   card.style.opacity = '0.5';
   card.querySelector('.friend-actions').innerHTML = '<span style="font-size:13px; color:var(--text-secondary)">Solicitud aceptada</span>';
-  
   DATA.friendRequests = DATA.friendRequests.filter(r => r.id !== reqId);
   updateFriendsTabBadge();
 }
@@ -287,7 +253,6 @@ function acceptFriendRequest(btn, reqId) {
 function deleteFriendRequest(btn, reqId) {
   const card = btn.closest('.friend-request-card');
   card.remove();
-  
   DATA.friendRequests = DATA.friendRequests.filter(r => r.id !== reqId);
   updateFriendsTabBadge();
 }
