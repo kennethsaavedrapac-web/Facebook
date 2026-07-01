@@ -199,8 +199,8 @@ window.DATA = {
       privacy: 'public',
       text: '¡Nuevo akuma en acción! 💜<br>Opiniones sobre "Gorizilla" 😢👇',
       images: [
-        'fb2018/images/gorizilla_post.png',
-        'fb2018/images/cat_noir_avatar.png'
+        'fb2018/images/Ladybug2.png',
+        'fb2018/images/Ladybug2.1.png'
       ],
       reactions: { like: 760, love: 98, wow: 3 },
       commentCount: 92,
