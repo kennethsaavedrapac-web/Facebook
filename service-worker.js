@@ -1,5 +1,5 @@
 // Service Worker para Facebook PWA
-const CACHE_NAME = 'facebook-pwa-v6';
+const CACHE_NAME = 'facebook-pwa-v7';
 const urlsToCache = [
   './',
   './index.html',

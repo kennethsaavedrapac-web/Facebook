@@ -80,7 +80,7 @@
 /* Cover & Avatar Area 2018 */
 .profile-cover-container {
   width: 100%;
-  height: 190px;
+  height: 180px;
   position: relative;
   background: #ccd0d5;
 }
@@ -108,69 +108,48 @@
 .profile-avatar-outer-wrap {
   display: flex;
   justify-content: center;
-  margin-top: -60px;
+  margin-top: -85px;
   position: relative;
   z-index: 5;
 }
 .profile-avatar-container {
   position: relative;
-  width: 128px;
-  height: 128px;
+  width: 120px;
+  height: 120px;
 }
 .profile-avatar {
   width: 100%;
   height: 100%;
-  border-radius: 4px; /* Square-ish avatar like in reference images */
-  border: 4px solid white;
+  border-radius: 2px; /* Less rounded corners, matching 2018 style */
+  border: 5px solid white;
   object-fit: cover;
   background: white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-}
-.profile-avatar-add-overlay {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--fb-blue);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.profile-avatar-add-overlay .plus-icon {
-  font-size: 14px;
-  line-height: 1;
 }
 
 /* Profile Info Area */
 .profile-meta-info {
   text-align: center;
-  padding: 12px 16px 4px;
+  padding: 6px 16px 2px;
   background: white;
+  margin-top: -35px; /* Pulls the white block to touch the cover precisely */
 }
 .profile-name-centered {
-  font-size: 21px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 500;
   color: #1c1e21;
 }
 .profile-bio-sub {
-  font-size: 14px;
+  font-size: 13px;
   color: #616770;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 /* Horizontal Actions Row 2018 */
 .profile-actions-row-2018 {
   display: flex;
   justify-content: space-between;
-  padding: 10px 16px;
+  padding: 8px 16px;
   background: white;
   border-bottom: 1px solid var(--border);
   gap: 8px;
@@ -179,9 +158,9 @@
   flex: 1;
   background: #f5f6f7;
   border: 1px solid #ced0d4;
-  border-radius: 4px;
-  height: 36px;
-  font-size: 13px;
+  border-radius: 2px; /* Classic less rounded button border */
+  height: 32px;
+  font-size: 12px;
   font-weight: 500;
   color: #4b4f56;
   display: flex;
@@ -215,14 +194,14 @@
   background: white;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  height: 48px;
+  height: 40px;
 }
 .profile-tab-btn {
   flex: 1;
   background: none;
   border: none;
   border-right: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #616770;
   cursor: pointer;
@@ -248,7 +227,7 @@
 
 /* Tabs Panes Layout */
 .profile-tab-contents {
-  padding-bottom: 24px;
+  padding-bottom: 12px;
 }
 .profile-tab-pane {
   display: none;
@@ -260,10 +239,10 @@
 /* Cards System 2018 */
 .profile-card-2018 {
   background: white;
-  margin-top: 8px;
+  margin-top: 6px;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 12px 16px;
+  padding: 10px 12px;
 }
 .card-header-2018 {
   display: flex;
@@ -642,32 +621,34 @@
 
 .profile-skeleton .sk-cover {
   width: 100%;
-  height: 190px;
+  height: 180px;
   border-radius: 0;
 }
 
 .profile-skeleton .sk-avatar-wrap {
   display: flex;
   justify-content: center;
-  margin-top: -60px;
+  margin-top: -85px;
   position: relative;
   z-index: 2;
 }
 
 .profile-skeleton .sk-avatar {
-  width: 128px;
-  height: 128px;
-  border-radius: 4px; /* Matches the square design */
-  border: 4px solid white;
+  width: 120px;
+  height: 120px;
+  border-radius: 2px; /* Matches the square design */
+  border: 5px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .profile-skeleton .sk-info {
-  padding: 14px 16px 0;
+  padding: 6px 16px 2px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  margin-top: -35px;
+  background: white;
 }
 
 .profile-skeleton .sk-name {
@@ -691,27 +672,27 @@
 .profile-skeleton .sk-buttons-row {
   display: flex;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   background: white;
   border-bottom: 1px solid var(--border);
 }
 
 .profile-skeleton .sk-btn-primary {
   flex: 1;
-  height: 36px;
-  border-radius: 4px;
+  height: 32px;
+  border-radius: 2px;
 }
 
 .profile-skeleton .sk-btn-secondary {
   flex: 1;
-  height: 36px;
-  border-radius: 4px;
+  height: 32px;
+  border-radius: 2px;
 }
 
 .profile-skeleton .sk-btn-more {
   width: 48px;
-  height: 36px;
-  border-radius: 4px;
+  height: 32px;
+  border-radius: 2px;
 }
 
 /* Shimmer Fade transitions */

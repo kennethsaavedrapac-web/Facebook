@@ -204,12 +204,6 @@ window.ProfileStore = (() => {
       <div class="profile-avatar-outer-wrap">
         <div class="profile-avatar-container">
           <img src="${user.avatar}" class="profile-avatar" onerror="this.src='fb2018/Perfil/PerfilFoto.png'">
-          ${user.id === 0 ? `
-            <div class="profile-avatar-add-overlay">
-              <span class="plus-icon">+</span>
-              <span>Foto</span>
-            </div>
-          ` : ''}
         </div>
       </div>
 
@@ -228,10 +222,6 @@ window.ProfileStore = (() => {
           <button class="action-btn-2018" id="action-btn-info-edit">
             <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
             <span>Actualizar inf.</span>
-          </button>
-          <button class="action-btn-2018" id="action-btn-view-as">
-            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3z"/></svg>
-            <span>Ver como</span>
           </button>
           <button class="action-btn-2018" id="btn-profile-more">
             <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"/></svg>
@@ -330,41 +320,10 @@ window.ProfileStore = (() => {
             </div>
           </div>
 
-          <!-- Fotos Card -->
-          <div class="profile-card-2018 shortcut-card-2018">
-            <div class="shortcut-header-2018">
-              <div class="shortcut-title-wrap">
-                <span class="shortcut-circle-icon icon-green">
-                  <svg viewBox="0 0 24 24" width="16" height="16"><path fill="white" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-                </span>
-                <span class="shortcut-title-text">Fotos</span>
-              </div>
-            </div>
-            <div class="shortcut-body-2018">
-              <div class="shortcut-empty-state">
-                <svg class="empty-icon-grey" viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-                <div class="empty-text">Muestra a las personas lo que estuviste haciendo.</div>
-              </div>
-              <div class="shortcut-actions-2018">
-                <button class="shortcut-btn-2018" id="btn-photos-now-no">Ahora no</button>
-                <button class="shortcut-btn-2018 blue-text" id="btn-photos-add-photo">Agregar foto</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Amigos Card -->
-          <div class="profile-card-2018 shortcut-card-2018">
-            <div class="shortcut-header-2018">
-              <div class="shortcut-title-wrap">
-                <span class="shortcut-circle-icon icon-pink">
-                  <svg viewBox="0 0 24 24" width="16" height="16"><path fill="white" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                </span>
-                <span class="shortcut-title-text">Amigos</span>
-              </div>
-            </div>
-            <div class="shortcut-body-2018">
-              <div class="shortcut-empty-state">
-                <svg class="empty-icon-grey" viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          <!-- Timeline Publicaciones Section -->
+          <div id="profile-posts-list"></div>
+          
+        </div> 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                 <div class="empty-text">Agrega amigos para empezar a ver sus novedades.</div>
               </div>
             </div>
@@ -678,12 +637,6 @@ window.ProfileStore = (() => {
         alert('Funcionalidad de cambiar foto de portada próximamente.');
       });
     }
-    const avatarOverlay = content.querySelector('.profile-avatar-add-overlay');
-    if (avatarOverlay) {
-      avatarOverlay.addEventListener('click', () => {
-        alert('Funcionalidad de cambiar foto de perfil próximamente.');
-      });
-    }
 
     // 3. Actions Row Events (Josseling)
     const publishBtn = content.querySelector('#action-btn-publish');
@@ -712,12 +665,6 @@ window.ProfileStore = (() => {
       });
     }
 
-    const viewAsBtn = content.querySelector('#action-btn-view-as');
-    if (viewAsBtn) {
-      viewAsBtn.addEventListener('click', () => {
-        alert('Esta es una vista previa de tu perfil (modo "Ver como").');
-      });
-    }
 
     // 4. Create Post Box Handlers
     const cpInput = content.querySelector('.create-post-input-2018');
@@ -741,20 +688,6 @@ window.ProfileStore = (() => {
       });
     }
 
-    // 6. Shortcut Cards Event Handlers
-    const nowNoBtn = content.querySelector('#btn-photos-now-no');
-    if (nowNoBtn) {
-      nowNoBtn.addEventListener('click', () => {
-        const card = nowNoBtn.closest('.shortcut-card-2018');
-        if (card) card.style.display = 'none';
-      });
-    }
-    const addPhotoBtn = content.querySelector('#btn-photos-add-photo');
-    if (addPhotoBtn) {
-      addPhotoBtn.addEventListener('click', () => {
-        alert('Funcionalidad de subir fotos próximamente.');
-      });
-    }
 
     // 7. Actions Row Events (Other Profiles)
     const msgBtn = content.querySelector('#btn-profile-msg');
