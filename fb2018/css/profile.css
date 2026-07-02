@@ -19,6 +19,7 @@
   --border: #DADDE1;
   --text: #1c1e21;
   --text-secondary: #616770;
+  --profile-avatar-size: 120px;
 }
 
 #screen-profile.active, #screen-album.active {
@@ -80,7 +81,7 @@
 /* Cover & Avatar Area 2018 */
 .profile-cover-container {
   width: 100%;
-  height: 180px;
+  height: 172px;
   position: relative;
   background: #ccd0d5;
 }
@@ -108,31 +109,30 @@
 .profile-avatar-outer-wrap {
   display: flex;
   justify-content: center;
-  margin-top: -85px;
+  margin-top: calc(var(--profile-avatar-size) / -2);
   position: relative;
   z-index: 5;
 }
 .profile-avatar-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: var(--profile-avatar-size);
+  height: var(--profile-avatar-size);
 }
 .profile-avatar {
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
   border-radius: 2px; /* Less rounded corners, matching 2018 style */
   border: 5px solid white;
   object-fit: cover;
-  background: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 
 /* Profile Info Area */
 .profile-meta-info {
   text-align: center;
-  padding: 6px 16px 2px;
+  padding: 14px 16px 4px;
   background: white;
-  margin-top: -35px; /* Pulls the white block to touch the cover precisely */
 }
 .profile-name-centered {
   font-size: 20px;
@@ -149,24 +149,24 @@
 .profile-actions-row-2018 {
   display: flex;
   justify-content: space-between;
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: white;
   border-bottom: 1px solid var(--border);
-  gap: 8px;
+  gap: 6px;
 }
 .action-btn-2018 {
   flex: 1;
   background: #f5f6f7;
   border: 1px solid #ced0d4;
   border-radius: 2px; /* Classic less rounded button border */
-  height: 32px;
+  height: 30px;
   font-size: 12px;
   font-weight: 500;
   color: #4b4f56;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   outline: none;
   min-width: 0;
@@ -187,6 +187,10 @@
   border-color: #ccd0d5;
   color: #1c1e21;
 }
+#action-btn-info-edit {
+  flex: 1.45;
+  font-size: 11px;
+}
 
 /* Tabs Bar Navigation 2018 */
 .profile-tabs-bar-2018 {
@@ -194,7 +198,7 @@
   background: white;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  height: 40px;
+  height: 38px;
 }
 .profile-tab-btn {
   flex: 1;
@@ -227,7 +231,7 @@
 
 /* Tabs Panes Layout */
 .profile-tab-contents {
-  padding-bottom: 12px;
+  padding-bottom: 8px;
 }
 .profile-tab-pane {
   display: none;
@@ -239,10 +243,10 @@
 /* Cards System 2018 */
 .profile-card-2018 {
   background: white;
-  margin-top: 6px;
+  margin-top: 4px;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 10px 12px;
+  padding: 8px 12px;
 }
 .card-header-2018 {
   display: flex;
@@ -267,29 +271,23 @@
   outline: none;
 }
 
-/* Presentación Card (Blue bordered or structured) */
-.presentacion-card {
-  border: 1px solid var(--fb-blue); /* Distinctive blue-ish highlight border */
-  border-left: none;
-  border-right: none;
-}
-.presentacion-subtitle {
-  font-size: 13px;
-  color: #8d949e;
-  margin-bottom: 12px;
-  line-height: 1.4;
+/* Compact profile information section */
+.profile-info-section-2018 {
+  background: white;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
 }
 .presentacion-bio-section {
-  padding-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #ebedf0;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   text-align: center;
 }
 .presentacion-bio-text {
   font-size: 14px;
   color: #1c1e21;
   line-height: 1.4;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 .presentacion-link-blue {
   font-size: 14px;
@@ -303,7 +301,7 @@
 .presentacion-details-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
 }
 .detail-item-2018 {
   display: flex;
@@ -320,37 +318,15 @@
   font-weight: 700;
   color: #1c1e21;
 }
-.presentacion-links-box {
-  margin-top: 14px;
-  border: 1px solid var(--fb-blue);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.presentacion-link-box-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background: white;
-  color: var(--fb-blue);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  text-align: center;
-}
-.presentacion-link-box-btn:active {
-  background: #f5f6f7;
-}
-
 /* Create Post Box 2018 style */
 .create-post-card-2018 {
-  padding: 10px 12px;
+  padding: 8px 12px;
 }
 .create-post-top-2018 {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #ebedf0;
 }
 .create-post-avatar-2018 {
@@ -364,7 +340,7 @@
   background: white;
   border: 1px solid #ced0d4;
   border-radius: 20px;
-  height: 36px;
+  height: 34px;
   padding: 0 16px;
   text-align: left;
   font-size: 14px;
@@ -377,7 +353,7 @@
 }
 .create-post-bottom-2018 {
   display: flex;
-  padding-top: 8px;
+  padding-top: 6px;
   gap: 0;
 }
 .create-post-btn-2018 {
@@ -394,7 +370,7 @@
   gap: 4px;
   cursor: pointer;
   outline: none;
-  height: 28px;
+  height: 26px;
   padding: 0 4px;
 }
 .create-post-btn-2018:last-child {
@@ -558,7 +534,7 @@
 
 /* ─── POST CARD STYLING OVERRIDES FOR 2018 ─── */
 #screen-profile .post-card {
-  margin-top: 8px;
+  margin-top: 4px;
   margin-bottom: 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);

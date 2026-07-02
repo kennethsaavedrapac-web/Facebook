@@ -221,7 +221,7 @@ window.ProfileStore = (() => {
           </button>
           <button class="action-btn-2018" id="action-btn-info-edit">
             <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-            <span>Actualizar inf.</span>
+            <span>Actualizar información</span>
           </button>
           <button class="action-btn-2018" id="btn-profile-more">
             <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"/></svg>
@@ -255,15 +255,8 @@ window.ProfileStore = (() => {
         <!-- Información / Timeline Tab Content -->
         <div class="profile-tab-pane active" id="pane-informacion">
           
-          <!-- Presentación (Info Card) -->
-          <div class="profile-card-2018 presentacion-card">
-            <div class="card-header-2018">
-              <span>Preséntate</span>
-              <button class="card-close-btn-2018">✕</button>
-            </div>
-            <div class="card-body-2018">
-              <div class="presentacion-subtitle">Personaliza la información que se ve en la parte superior de tu perfil.</div>
-              
+          <!-- Profile information -->
+          <div class="profile-info-section-2018">
               <div class="presentacion-bio-section">
                 ${user.bio ? `<div class="presentacion-bio-text">${user.bio}</div>` : ''}
                 <a href="#" class="presentacion-link-blue" id="btn-edit-bio-mock">${user.bio ? 'Editar' : '+ Describe quién eres'}</a>
@@ -288,14 +281,6 @@ window.ProfileStore = (() => {
                 </div>
               </div>
 
-              ${user.id === 0 ? `
-                <div class="presentacion-links-box">
-                  <a href="#" class="presentacion-link-box-btn">
-                    <span>+ Agregar Instagram, sitios web y otros enlaces</span>
-                  </a>
-                </div>
-              ` : ''}
-            </div>
           </div>
 
           <!-- Create Post Box -->
@@ -317,15 +302,6 @@ window.ProfileStore = (() => {
                 <svg viewBox="0 0 24 24" width="18" height="18" class="btn-icon-blue"><path fill="currentColor" d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z"/></svg>
                 <span>Acontecimiento importante</span>
               </button>
-            </div>
-          </div>
-
-          <!-- Timeline Publicaciones Section -->
-          <div id="profile-posts-list"></div>
-          
-        </div> 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                <div class="empty-text">Agrega amigos para empezar a ver sus novedades.</div>
-              </div>
             </div>
           </div>
 
@@ -748,4 +724,3 @@ window.ProfileStore = (() => {
 })();
 
 window.Profile = window.ProfileStore;
-
